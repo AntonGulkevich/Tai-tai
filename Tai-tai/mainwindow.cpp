@@ -3,8 +3,6 @@
 MainWindow::MainWindow(QWidget *parent):QFrame(parent)
 {
     /*Start up properties of main window*/
-    QSize mainWindowStartSize;
-    QPoint mainWindownStartPoint;
 
     //temporary settings//
     mainWindowStartSize.setHeight(600);
@@ -17,21 +15,26 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
 
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     setWindowFlags(Qt::FramelessWindowHint);
-    //setAutoFillBackground(true);
     resize(mainWindowStartSize);
     move(mainWindownStartPoint);
     setMinimumSize(500, 550);
     setStyleSheet("QFrame {border: 1px solid lightgrey;}");
     setGrayBackground();
 
+    TSTSTSTTS= new QPushButton("holly shit", this);
+    TSTSTSTTS->resize(100, 100);
+    TSTSTSTTS->move(500, 500);
+    TSTSTSTTS->show();
+    TSTSTSTTS->setEnabled(true);
+
     QPushButton * btn= new QPushButton("test", this);
     btn->resize(100, 100);
-    btn->move(100, 100);
+    btn->move(500, 100);
     btn->show();
     connect(btn, SIGNAL(pressed()), this, SLOT(btnPressed()));
     connect(btn, SIGNAL(released()), this, SLOT(btnReleased()));
 
-   // QPropertyAnimation * anim = new QPropertyAnimation()
+    MainProfileWindow = new ProfileWindow(this);
 
 }
 
@@ -40,11 +43,23 @@ MainWindow::~MainWindow()
 
 }
 void MainWindow::btnPressed(){
-    setGrayBackground();
+
 }
 void MainWindow::btnReleased(){
 
-    setWhiteBackground();
+    if (TSTSTSTTS->isEnabled()){
+        setGrayBackground();
+        MainProfileWindow->StartShowAnim(0, 0, mainWindowStartSize.width()/2, mainWindowStartSize.height());
+
+    }
+    else{
+        setWhiteBackground();
+        MainProfileWindow->StartHideAnim(0, 0, mainWindowStartSize.width()/2, mainWindowStartSize.height());
+    }
+    TSTSTSTTS->setEnabled(! (TSTSTSTTS->isEnabled()));
+
+
+   // MainProfileWindow->show();
 }
 
 

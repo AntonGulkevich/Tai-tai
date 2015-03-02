@@ -8,11 +8,20 @@
 #include <QPushButton>
 
 #include "agbutton.h"
+#include "profilewindow.h"
+
 
 class MainWindow : public QFrame
 {
     Q_OBJECT
 private:
+    ProfileWindow * MainProfileWindow;
+
+    QSize mainWindowStartSize;
+    QPoint mainWindownStartPoint;
+
+    /*test*/
+    QPushButton * TSTSTSTTS;
 
 public:
     MainWindow(QWidget *parent = 0);

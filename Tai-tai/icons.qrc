@@ -1,0 +1,52 @@
+<RCC>
+    <qresource prefix="/">
+        <file>../resourses/icons/ava_def.jpg</file>
+        <file>../resourses/icons/black.jpg</file>
+        <file>../resourses/icons/attachment_def.png</file>
+        <file>../resourses/icons/attachment_sel.png</file>
+        <file>../resourses/icons/black.png</file>
+        <file>../resourses/icons/check_def.png</file>
+        <file>../resourses/icons/check_sel.png</file>
+        <file>../resourses/icons/clef.png</file>
+        <file>../resourses/icons/close_def.png</file>
+        <file>../resourses/icons/close_sel.png</file>
+        <file>../resourses/icons/down_def.png</file>
+        <file>../resourses/icons/down_sel.png</file>
+        <file>../resourses/icons/home_def.png</file>
+        <file>../resourses/icons/home_sel.png</file>
+        <file>../resourses/icons/left_def.png</file>
+        <file>../resourses/icons/left_sel.png</file>
+        <file>../resourses/icons/max_def.png</file>
+        <file>../resourses/icons/max_sel.png</file>
+        <file>../resourses/icons/min_def.png</file>
+        <file>../resourses/icons/min_sel.png</file>
+        <file>../resourses/icons/minimize_def.png</file>
+        <file>../resourses/icons/minimize_sel.png</file>
+        <file>../resourses/icons/next_def.png</file>
+        <file>../resourses/icons/next_sel.png</file>
+        <file>../resourses/icons/open_def.png</file>
+        <file>../resourses/icons/open_sel.png</file>
+        <file>../resourses/icons/plus_def.png</file>
+        <file>../resourses/icons/plus_sel.png</file>
+        <file>../resourses/icons/prew_def.png</file>
+        <file>../resourses/icons/prew_sel.png</file>
+        <file>../resourses/icons/refresh_def.png</file>
+        <file>../resourses/icons/refresh_sel.png</file>
+        <file>../resourses/icons/right_def.png</file>
+        <file>../resourses/icons/right_sel.png</file>
+        <file>../resourses/icons/save_def.png</file>
+        <file>../resourses/icons/save_sel.png</file>
+        <file>../resourses/icons/search_def.png</file>
+        <file>../resourses/icons/search_sel.png</file>
+        <file>../resourses/icons/send_def.png</file>
+        <file>../resourses/icons/send_sel.png</file>
+        <file>../resourses/icons/up_def.png</file>
+        <file>../resourses/icons/up_sel.png</file>
+        <file>../resourses/icons/warning_def.png</file>
+        <file>../resourses/icons/warning_sel.png</file>
+        <file>../resourses/icons/write_def.png</file>
+        <file>../resourses/icons/write_sel.png</file>
+    </qresource>
+    <qresource prefix="/../resourses/icons"/>
+    <qresource prefix="/resourses/icons"/>
+</RCC>
