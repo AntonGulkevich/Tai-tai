@@ -20,11 +20,11 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     bigLay->addLayout(botLay, 1);
 
     ExLabel *profileNameLabel = new ExLabel("default");
-    QLabel *profileAvaLabel = new QLabel("AVA");
+    ExLabel *profileAvaLabel = new ExLabel("AVA");
     ExLabel *profilePasswordLabel = new ExLabel("password");
 
 
-    profileAvaLabel->setStyleSheet("QLabel{border: 1px solid gray; padding: 2px}");
+    profileAvaLabel->setStyleSheet("QLabel{border: 1px solid gray; padding: 1px}");
 
     profileNameLabel->setMaximumSize(220, 20);
     profilePasswordLabel->setMaximumSize(220, 20);
@@ -32,6 +32,7 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     profileAvaLabel->setMaximumSize(200, 220);
     QPixmap avadef(":/resourses/icons/ava_def.jpg");
     profileAvaLabel->setPixmap(avadef);
+
    // profileAvaLabel->setMask(avadef.mask());
 
     topLay->addStretch(1);
@@ -43,8 +44,10 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     topLay->setMargin(10);
 
 
-    QLabel *test = new QLabel("test", this);
-    botLay->addWidget(test, 1);
+   // botLay->addWidget(testExButton, 1, Qt::AlignVCenter);
+
+
+
 
 }
 ProfileWindow::~ProfileWindow(){

@@ -9,6 +9,7 @@
 
 #include "agbutton.h"
 #include "profilewindow.h"
+#include "exbutton.h"
 
 
 class MainWindow : public QFrame

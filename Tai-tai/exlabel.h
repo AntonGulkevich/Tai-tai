@@ -15,8 +15,21 @@ public:
     void SetUnSelectedFont(const QFont &font);
     void SetActiveFont(const QFont &font);
     bool isActive();
-    void setActive(bool status);
+    void setActive(bool status);    
+    void setActiveStyleSheet(const QString& ss);
+    void setInActiveStyleSheet(const QString& ss);
 
+    void incActiveFont();
+    void incUnselectedFont();
+    void incSelectedFont();
+
+    void decrActiveFont();
+    void decrUnselectedFont();
+    void decrSelectedFont();
+
+    void setActiveFontSize(int size);
+    void setSelectedFontSize(int size);
+    void setUnselectedFontSize(int size);
 signals:
     void clicked();
 
@@ -29,12 +42,15 @@ protected:
     virtual void leaveEvent(QEvent * event);
     virtual void enterEvent(QEvent *event);
 
+
 private:
     QFont *selectedFont;
     QFont *unselectedFont;
     QFont *activeFont;
     bool active;
     QPoint pos;
+    QString activeStyleSheet;
+    QString inActiveStyleSheet;
 };
 
 #endif // EXLABEL_H

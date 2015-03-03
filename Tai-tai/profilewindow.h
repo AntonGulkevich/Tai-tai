@@ -9,6 +9,7 @@
 #include <QPropertyAnimation>
 
 #include "exlabel.h"
+#include "exbutton.h"
 
 class ProfileWindow : public QFrame
 {

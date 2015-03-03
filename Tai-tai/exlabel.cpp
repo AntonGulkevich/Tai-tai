@@ -20,6 +20,8 @@ ExLabel::ExLabel(const QString &text, QWidget *parent) :
     activeFont->setUnderline(true);
 
     setStyleSheet("QLabel{border: 0 px}");
+    activeStyleSheet="QLabel{border: 2px solid gray; padding: 1px}";
+    inActiveStyleSheet="QLabel{border: 1px solid gray; padding: 1px}";
 
     active=false;
 }
@@ -37,6 +39,8 @@ void ExLabel::leaveEvent(QEvent *event){
         setFont(*unselectedFont);
     }
     QWidget::leaveEvent(event);
+    if (pixmap())
+        setStyleSheet(inActiveStyleSheet);
 }
 void ExLabel::enterEvent(QEvent *event){
     if (active){
@@ -46,6 +50,8 @@ void ExLabel::enterEvent(QEvent *event){
         setFont(*selectedFont);
     }
     QWidget::enterEvent(event);
+    if (pixmap())
+        setStyleSheet(activeStyleSheet);
 }
 void ExLabel::SetSelectedFont(const QFont &font){
     *selectedFont= font;
@@ -57,6 +63,8 @@ void ExLabel::SetUnSelectedFont(const QFont &font){
     *unselectedFont=font;
 }
 void ExLabel::mousePressEvent(QMouseEvent *pe){
+    if (pixmap())
+        setStyleSheet(inActiveStyleSheet);
     setFont(*activeFont);
 }
 void ExLabel::mouseReleaseEvent(QMouseEvent *pe){
@@ -67,6 +75,8 @@ void ExLabel::mouseReleaseEvent(QMouseEvent *pe){
         setFont(*selectedFont);
     }
     OnClick();
+    if (pixmap())
+        setStyleSheet(activeStyleSheet);
 }
 void ExLabel::setActive(bool status){
     setFont(*activeFont);
@@ -78,4 +88,40 @@ bool ExLabel::isActive(){
 void ExLabel::OnClick(){
     emit clicked();
 }
+void ExLabel::setActiveStyleSheet(const QString &ss){
+    activeStyleSheet=ss;
+}
+void ExLabel::setInActiveStyleSheet(const QString &ss){
+    inActiveStyleSheet=ss;
+}
+void ExLabel::incActiveFont(){
+    activeFont->setPixelSize(activeFont->pixelSize()+1);
+}
+void ExLabel::decrActiveFont(){
+    activeFont->setPixelSize(activeFont->pixelSize()-1);
+}
+void ExLabel::incSelectedFont(){
+    selectedFont->setPixelSize(activeFont->pixelSize()+1);
+}
+void ExLabel::decrSelectedFont(){
+    selectedFont->setPixelSize(activeFont->pixelSize()-1);
+}
+void ExLabel::incUnselectedFont(){
+    unselectedFont->setPixelSize(activeFont->pixelSize()+1);
+}
+void ExLabel::decrUnselectedFont(){
+    unselectedFont->setPixelSize(activeFont->pixelSize()-1);
+}
+void ExLabel::setActiveFontSize(int size){
+    activeFont->setPixelSize(size);
+}
+void ExLabel::setSelectedFontSize(int size){
+    selectedFont->setPixelSize(size);
+}
+void ExLabel::setUnselectedFontSize(int size){
+    unselectedFont->setPixelSize(size);
+}
+
+
+
 

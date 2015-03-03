@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
     TSTSTSTTS->show();
     TSTSTSTTS->setEnabled(true);
 
+
     QPushButton * btn= new QPushButton("test", this);
     btn->resize(100, 100);
     btn->move(500, 100);
@@ -35,6 +36,20 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
     connect(btn, SIGNAL(released()), this, SLOT(btnReleased()));
 
     MainProfileWindow = new ProfileWindow(this);
+    QString sdfasdf= "test";
+
+    ExButton *testExButton = new ExButton(this, "Login", 50);
+    testExButton->setWindowFlags(Qt::WindowStaysOnTopHint);
+
+    testExButton->move(100, 400);
+
+    testExButton->addSubbButton("New");
+    testExButton->addSubbButton("Delete");
+    testExButton->addSubbButton("Change");
+    testExButton->addSubbButton("Exit");
+    testExButton->addSubbButton("Setup");
+
+    setWhiteBackground();
 
 }
 
@@ -57,9 +72,6 @@ void MainWindow::btnReleased(){
         MainProfileWindow->StartHideAnim(0, 0, mainWindowStartSize.width()/2, mainWindowStartSize.height());
     }
     TSTSTSTTS->setEnabled(! (TSTSTSTTS->isEnabled()));
-
-
-   // MainProfileWindow->show();
 }
 
 
