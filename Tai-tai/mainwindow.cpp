@@ -38,16 +38,19 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
     MainProfileWindow = new ProfileWindow(this);
     QString sdfasdf= "test";
 
-    ExButton *testExButton = new ExButton(this, "Login", 50);
+    ExButton *testExButton = new ExButton(this,  "Profile", 50);
     testExButton->setWindowFlags(Qt::WindowStaysOnTopHint);
 
-    testExButton->move(100, 400);
-
-    testExButton->addSubbButton("New");
+    testExButton->move(500, 400);
+    testExButton->setRotation(201);
+/*
+    testExButton->addSubbButton("Create");
     testExButton->addSubbButton("Delete");
-    testExButton->addSubbButton("Change");
-    testExButton->addSubbButton("Exit");
-    testExButton->addSubbButton("Setup");
+    testExButton->addSubbButton("Edit");
+    testExButton->addSubbButton("Exit");*/
+    for (int i=0; i<10;++i){
+        testExButton->addSubbButton("Edit");
+    }
 
     setWhiteBackground();
 

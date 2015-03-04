@@ -9,9 +9,9 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     setWindowFlags(Qt::FramelessWindowHint);
     setStyleSheet("QFrame{background-color: white }");
 
-    QBoxLayout * bigLay = new QBoxLayout(QBoxLayout::TopToBottom, this);
-    QBoxLayout * topLay = new QBoxLayout(QBoxLayout::TopToBottom);
-    QBoxLayout * botLay = new QBoxLayout(QBoxLayout::TopToBottom);
+    bigLay = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    topLay = new QBoxLayout(QBoxLayout::TopToBottom);
+    botLay = new QBoxLayout(QBoxLayout::TopToBottom);
 
     bigLay->setMargin(0);
     bigLay->setSpacing(0);
@@ -43,11 +43,19 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     topLay->setSpacing(10);
     topLay->setMargin(10);
 
+    botLay->addStretch(1);
 
-   // botLay->addWidget(testExButton, 1, Qt::AlignVCenter);
+    ExButton *testExButton = new ExButton(this,  "Profile", 50);
+    //testExButton->setWindowFlags(Qt::WindowStaysOnTopHint);
 
+    testExButton->move(800/4-100+50/2, 600/2+50/2+50);
+    testExButton->setRotation(201);
 
-
+    testExButton->addSubbButton("Create");
+    testExButton->addSubbButton("Delete");
+    testExButton->addSubbButton("Edit");
+    testExButton->addSubbButton("Exit");
+    testExButton->addSubbButton("Help");
 
 }
 ProfileWindow::~ProfileWindow(){
@@ -61,6 +69,11 @@ void ProfileWindow::StartShowAnim(int left, int top, int width, int height){
     animation->setEndValue(QRect(left, top, width-100, height));
 
     animation->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void ProfileWindow::drawButton(){
+
+
 }
 void ProfileWindow::StartHideAnim(int left, int top, int width, int height){
 

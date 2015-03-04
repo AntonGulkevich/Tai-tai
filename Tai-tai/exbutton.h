@@ -18,8 +18,10 @@ public:
     void setRadius(int radius);
     void setSmallRadius(int radius);
     void addSubbButton(const QString & caption);
-    void open(int scale);
-    void close(int scale);
+    void open(int scale, int duration);
+    void close(int scale,int duration);
+    void setRotation(int degree);
+    void preview();
 signals:
     void clicked();
 public slots:
@@ -31,9 +33,8 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent* pe);
     virtual void leaveEvent(QEvent * event);
     virtual void enterEvent(QEvent *event);
-
     virtual void resizeEvent(QResizeEvent *event);
-
+    virtual void moveEvent(QMoveEvent *event);
 
 private:
     QString Caption;
@@ -41,7 +42,9 @@ private:
     int SmallRadius;
     bool isMaxed;
     bool isLocked;
+    int rotation;
     QLabel *captionExLabel;
+    QLabel *imageLabel;
     QString hoverSS;
 
     QString pressedSSBig;

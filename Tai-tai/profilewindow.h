@@ -23,9 +23,13 @@ public:
 signals:
 
 public slots:
+    void drawButton();
 
 private:
     QPropertyAnimation * animation;
+    QBoxLayout * bigLay;
+    QBoxLayout * topLay;
+    QBoxLayout * botLay;
 };
 
 #endif // PROFILEWINDOW_H
