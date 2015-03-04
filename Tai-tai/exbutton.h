@@ -34,7 +34,6 @@ protected:
     virtual void leaveEvent(QEvent * event);
     virtual void enterEvent(QEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
-    virtual void moveEvent(QMoveEvent *event);
 
 private:
     QString Caption;
@@ -43,8 +42,10 @@ private:
     bool isMaxed;
     bool isLocked;
     int rotation;
+    QBoxLayout *mainLay;
     QLabel *captionExLabel;
     QLabel *imageLabel;
+
     QString hoverSS;
 
     QString pressedSSBig;

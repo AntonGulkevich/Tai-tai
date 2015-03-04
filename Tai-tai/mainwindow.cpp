@@ -36,9 +36,10 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
     connect(btn, SIGNAL(released()), this, SLOT(btnReleased()));
 
     MainProfileWindow = new ProfileWindow(this);
-    QString sdfasdf= "test";
 
-    ExButton *testExButton = new ExButton(this,  "Profile", 50);
+    QString nameTestButton = "Profile";
+
+    ExButton *testExButton = new ExButton(this,  nameTestButton, 50);
     testExButton->setWindowFlags(Qt::WindowStaysOnTopHint);
 
     testExButton->move(500, 400);
@@ -48,6 +49,8 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
     testExButton->addSubbButton("Delete");
     testExButton->addSubbButton("Edit");
     testExButton->addSubbButton("Exit");*/
+
+    testExButton->setCaption("hello");
     for (int i=0; i<10;++i){
         testExButton->addSubbButton("Edit");
     }

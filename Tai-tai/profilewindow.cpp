@@ -45,7 +45,8 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
 
     botLay->addStretch(1);
 
-    ExButton *testExButton = new ExButton(this,  "Profile", 50);
+    QString profileName = "Profile";
+    ExButton *testExButton = new ExButton(this,  profileName, 50);
     //testExButton->setWindowFlags(Qt::WindowStaysOnTopHint);
 
     testExButton->move(800/4-100+50/2, 600/2+50/2+50);

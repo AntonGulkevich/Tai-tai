@@ -27,7 +27,7 @@ ExButton::ExButton(QWidget *parent, const QString &caption, int r) :
 
     this->setStyleSheet(defaultSSBig);
 
-    QBoxLayout *mainLay = new QBoxLayout(QBoxLayout::TopToBottom);
+    mainLay = new QBoxLayout(QBoxLayout::TopToBottom, this);
     mainLay->setMargin(0);
     mainLay->setSpacing(0);
     this->setLayout(mainLay);
@@ -36,16 +36,13 @@ ExButton::ExButton(QWidget *parent, const QString &caption, int r) :
     pal.setColor(captionExLabel->foregroundRole(), QColor(0, 90, 255));
 */
 
-    captionExLabel=new QLabel(Caption);
+    captionExLabel=new QLabel(Caption, this);
     captionExLabel->setStyleSheet("QLabel{border-width: 0px; color: black;}");
     captionExLabel->setAttribute(Qt::WA_TranslucentBackground);
    // captionExLabel->move(captionExLabel->geometry().left()+Radius,captionExLabel->geometry().top());
    // captionExLabel->setPalette(pal);
     mainLay->addWidget(captionExLabel, 0, Qt::AlignCenter);
-
-    imageLabel= new QLabel("Caption");
-   // imageLabel->setStyleSheet("QLabel{border-width: 0px; color: black;}");
-   // imageLabel->setAttribute(Qt::WA_TranslucentBackground);
+    imageLabel = new QLabel("Image", parent);
 
     setMaximumSize(Radius,Radius);
     setMinimumSize(SmallRadius, SmallRadius);
@@ -53,7 +50,13 @@ ExButton::ExButton(QWidget *parent, const QString &caption, int r) :
 }
 
 ExButton::~ExButton(){
-
+    if (imageLabel)
+        delete imageLabel;
+    if (captionExLabel)
+        delete captionExLabel;
+    if (mainLay)
+        delete mainLay;
+    subButtons.clear();
 }
 void ExButton::setCaption(const QString &caption){
     Caption =caption;
@@ -68,7 +71,7 @@ void ExButton::setSmallRadius(int radius){
 
 void ExButton::addSubbButton(const QString &caption)
 {
-    ExButton *subButton = new ExButton(this->parentWidget() , caption, Radius);
+    ExButton *subButton = new ExButton(this->parentWidget(), caption, Radius);
     subButton->setGeometry(this->geometry());
     subButton->setWindowFlags(Qt::WindowStaysOnBottomHint);
     subButton->lower();
@@ -104,7 +107,7 @@ void ExButton::open(int scale, int duration){
         btn->Locked();
         btn->isMaxed=true;
         btn->captionExLabel->setText(btn->Caption);
-        QPropertyAnimation * ani = new QPropertyAnimation(btn, "geometry");
+        QPropertyAnimation * ani = new QPropertyAnimation(btn, "geometry", this);
         ani->setDuration(duration);
         ani->setEasingCurve(QEasingCurve::OutExpo);
 
@@ -134,7 +137,7 @@ void ExButton::close(int scale,int duration){
     for (int i=0; i<buttonCount; i++){
         ExButton * btn = subButtons.at(i);
         btn->Locked();
-        QPropertyAnimation * ani = new QPropertyAnimation(btn, "geometry");
+        QPropertyAnimation * ani = new QPropertyAnimation(btn, "geometry", this);
         ani->setDuration(duration);
         ani->setEasingCurve(QEasingCurve::InExpo);
         ani->setEndValue(QRectF(this->geometry().left()+scale/*+SmallRadius/2-Radius/2+scale*/,
@@ -160,7 +163,7 @@ void ExButton::preview()
     for (int i=0; i<buttonCount; i++){
         ExButton * btn = subButtons.at(i);
         btn->Locked();
-        QPropertyAnimation * ani = new QPropertyAnimation(btn, "geometry");
+        QPropertyAnimation * ani = new QPropertyAnimation(btn, "geometry", this);
         ani->setDuration(duration);
         ani->setEasingCurve(QEasingCurve::OutExpo);
         ani->setEndValue(QRectF(cos(angleUnit*i+koef*rotation)*scale+this->geometry().left(),
@@ -182,7 +185,7 @@ void ExButton::OnClick(){
     if(!isMaxed){
         open(1, 1000);
 
-        animation = new QPropertyAnimation(this, "geometry");
+        animation = new QPropertyAnimation(this, "geometry", this);
         animation->setDuration(300);
         animation->setEasingCurve(QEasingCurve::InCubic);
         animation->setStartValue(QRect(this->geometry().left(),this->geometry().top(),Radius, Radius ));
@@ -265,22 +268,13 @@ void ExButton::leaveEvent(QEvent *event){
 }
 void ExButton::resizeEvent(QResizeEvent *event)
 {
-    setStyleSheet("QWidget{border: 1px solid gray; border-radius: " +QString::number(this->geometry().height()/2)+"px;\
-                  background: qlineargradient(x1:0.5, y1:0, x2:0.5, y2:4,stop:0 white, stop: 1 gray)}");
+
 /*
     setStyleSheet("QWidget{border: 1px solid gray; border-radius: " +QString::number(this->geometry().height()/2)+"px;\
                   background: qqradialgradient(cx:0, cy:0, radius: 1,fx:1, fy:1, stop:0 white, stop:1 black) }");*/
-    QFrame::resizeEvent(event);
+
+    setStyleSheet("QWidget{border: 1px solid gray; border-radius: " +QString::number(this->geometry().height()/2)+"px;\
+                  background: qlineargradient(x1:0.5, y1:0, x2:0.5, y2:4,stop:0 white, stop: 1 gray)}");
 
 }
-
-void ExButton::moveEvent(QMoveEvent *event){
-    /*
-    if (imageLabel){
-        imageLabel->move(event->pos().x(), event->pos().y());
-    }
-*/
-   // QFrame::moveEvent(event);
-}
-
 
