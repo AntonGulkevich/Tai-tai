@@ -51,12 +51,15 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
 
     testExButton->move(800/4-100+50/2, 600/2+50/2+50);
     testExButton->setRotation(201);
+    testExButton->setImage(":/resourses/icons/more.png");
+    testExButton->setImageMargin(10);
+    testExButton->setToolTip("hello");
 
-    testExButton->addSubbButton("Create");
-    testExButton->addSubbButton("Delete");
-    testExButton->addSubbButton("Edit");
-    testExButton->addSubbButton("Exit");
-    testExButton->addSubbButton("Help");
+    testExButton->addSubbButton("Create", ":/resourses/icons/create_acc.png", 10);
+    testExButton->addSubbButton("Delete", ":/resourses/icons/delete_acc.png", 10);
+    testExButton->addSubbButton("Edit", ":/resourses/icons/ch_left.png", 10);
+    testExButton->addSubbButton("Exit", ":/resourses/icons/ch_right.png", 10);
+    testExButton->addSubbButton("Help", ":/resourses/icons/down_def.png", 10);
 
 }
 ProfileWindow::~ProfileWindow(){

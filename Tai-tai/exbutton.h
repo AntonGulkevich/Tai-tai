@@ -15,26 +15,30 @@ public:
     explicit ExButton(QWidget *parent = 0,  const QString & caption="ExButton", int r=60);
     ~ExButton();
     void setCaption(const QString & caption);
+    void setImage(const QString &image);
     void setRadius(int radius);
     void setSmallRadius(int radius);
-    void addSubbButton(const QString & caption);
+    void addSubbButton(const QString & caption, const QString & imageWay, int margin);
     void open(int scale, int duration);
     void close(int scale,int duration);
     void setRotation(int degree);
     void preview();
+    void setImageMargin(int margin);
+
 signals:
     void clicked();
 public slots:
     void OnClick();
     void Locked();
     void Unlocked();
+    void Redraw(QVariant var);
 protected:
     virtual void mousePressEvent(QMouseEvent* pe);
     virtual void mouseReleaseEvent(QMouseEvent* pe);
     virtual void leaveEvent(QEvent * event);
     virtual void enterEvent(QEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
-
+    virtual void moveEvent(QMoveEvent *event);
 private:
     QString Caption;
     int Radius;

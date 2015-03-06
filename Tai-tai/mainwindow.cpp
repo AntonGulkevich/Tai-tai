@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
 
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     setWindowFlags(Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_TranslucentBackground);
     resize(mainWindowStartSize);
     move(mainWindownStartPoint);
     setMinimumSize(500, 550);
@@ -26,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
     TSTSTSTTS->move(500, 500);
     TSTSTSTTS->show();
     TSTSTSTTS->setEnabled(true);
+    connect(TSTSTSTTS, SIGNAL(clicked()), this, SLOT(showOverLay()));
 
 
     QPushButton * btn= new QPushButton("test", this);
@@ -37,25 +39,17 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
 
     MainProfileWindow = new ProfileWindow(this);
 
-    QString nameTestButton = "Profile";
-
-    ExButton *testExButton = new ExButton(this,  nameTestButton, 50);
-    testExButton->setWindowFlags(Qt::WindowStaysOnTopHint);
-
-    testExButton->move(500, 400);
-    testExButton->setRotation(201);
-/*
-    testExButton->addSubbButton("Create");
-    testExButton->addSubbButton("Delete");
-    testExButton->addSubbButton("Edit");
-    testExButton->addSubbButton("Exit");*/
-
-    testExButton->setCaption("hello");
-    for (int i=0; i<10;++i){
-        testExButton->addSubbButton("Edit");
-    }
-
     setWhiteBackground();
+
+    setStyleSheet("background: white");
+
+    overLay = new QWidget();
+    overLay->setWindowOpacity(0.5);
+    overLay->setWindowFlags(Qt::FramelessWindowHint);
+    overLay->setGeometry(this->geometry());
+    overLay->setStyleSheet("background: gray");
+    overLay->setParent(this);
+    overLay->show();
 
 }
 
@@ -80,11 +74,21 @@ void MainWindow::btnReleased(){
     TSTSTSTTS->setEnabled(! (TSTSTSTTS->isEnabled()));
 }
 
+void MainWindow::showOverLay()
+{
+
+}
+
 
 void MainWindow::setWhiteBackground(){
     QPalette ActPal;
     ActPal.setColor(backgroundRole(), Qt::white);
     setPalette(ActPal);
+
+}
+
+void MainWindow::setOverlay(){
+
 
 }
 void MainWindow::setGrayBackground(){

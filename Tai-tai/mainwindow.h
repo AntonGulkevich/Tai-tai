@@ -6,6 +6,7 @@
 #include <QPoint>
 #include <QPropertyAnimation>
 #include <QPushButton>
+#include <QGraphicsOpacityEffect>
 
 #include "agbutton.h"
 #include "profilewindow.h"
@@ -21,6 +22,7 @@ private:
     QSize mainWindowStartSize;
     QPoint mainWindownStartPoint;
 
+    QWidget *overLay;
     /*test*/
     QPushButton * TSTSTSTTS;
 
@@ -28,10 +30,12 @@ public:
     MainWindow(QWidget *parent = 0);
     void setGrayBackground();
     void setWhiteBackground();
+    void setOverlay();
     ~MainWindow();
 private slots:
     void btnPressed();
     void btnReleased();
+    void showOverLay();
 
 };
 

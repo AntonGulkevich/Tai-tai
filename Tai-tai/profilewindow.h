@@ -30,6 +30,7 @@ private:
     QBoxLayout * bigLay;
     QBoxLayout * topLay;
     QBoxLayout * botLay;
+
 };
 
 #endif // PROFILEWINDOW_H
