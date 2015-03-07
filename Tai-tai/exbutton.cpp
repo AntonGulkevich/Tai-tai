@@ -198,14 +198,28 @@ void ExButton::preview()
         connect(ani, SIGNAL(finished()), btn, SLOT(Unlocked()));
         ani->start(QAbstractAnimation::DeleteWhenStopped);
     }
-
 }
 
 void ExButton::setImageMargin(int margin){
     imageLabel->setMargin(margin);
 }
 
+ExButton *ExButton::getSubButton(int number)
+{
+    int buttonCount= subButtons.count();
+    if (buttonCount<number){
+        return NULL;
+    }
+    else
+        return subButtons.at(number);
+}
+
 void ExButton::OnClick(){
+
+    emit clicked();
+}
+
+void ExButton::onRightClicked(){
     int top;
     int left;
     int radOffset;
@@ -229,7 +243,6 @@ void ExButton::OnClick(){
         animation->start(QAbstractAnimation::DeleteWhenStopped);
 
         connect(animation, SIGNAL(finished()), this, SLOT(Unlocked()));
-       // connect(animation, SIGNAL(valueChanged(QVariant)), this, SLOT(Redraw(QVariant)));
         captionExLabel->setText(Caption.at(0));
     }
     else{
@@ -243,7 +256,6 @@ void ExButton::OnClick(){
         animation->start(QAbstractAnimation::DeleteWhenStopped);
 
         connect(animation, SIGNAL(finished()), this, SLOT(Unlocked()));
-      //  connect(animation, SIGNAL(valueChanged(QVariant)), this, SLOT(Redraw(QVariant)));
         captionExLabel->setText(Caption);
     }
     if (isMaxed){
@@ -252,7 +264,7 @@ void ExButton::OnClick(){
     else{
         setStyleSheet(defaultSSSmall+hoverSS+"QWidget{border-width:1px;}");
     }
-    emit clicked();
+    emit rightClicked();
 }
 
 void ExButton::Locked()
@@ -276,13 +288,15 @@ void ExButton::mousePressEvent(QMouseEvent* pe ){
     else{
         setStyleSheet(pressedSSSmall);
     }
-  //  QFrame::mousePressEvent(pe);
 }
 void ExButton::mouseReleaseEvent(QMouseEvent* pe){
-    if (!isLocked)
-        OnClick();
-    //QFrame::mouseReleaseEvent(pe);
-
+   if (!isLocked&&(pe->button()==Qt::RightButton)){
+        onRightClicked();
+   }
+   else{
+       if (!isLocked)
+            OnClick();
+   }
 }
 void ExButton::enterEvent(QEvent *event){
     int r, left, top;
@@ -309,8 +323,6 @@ void ExButton::enterEvent(QEvent *event){
 
     if (buttonCount&&isMaxed&&!isLocked)
         preview();
-
-    //QFrame::enterEvent(event);
 }
 void ExButton::leaveEvent(QEvent *event){
     int r;
@@ -335,9 +347,6 @@ void ExButton::leaveEvent(QEvent *event){
     if (buttonCount>0&&isMaxed&&!isLocked){
        close(0, 300);
     }
-
-
-    //QFrame::leaveEvent(event);
 }
 void ExButton::resizeEvent(QResizeEvent *event){
 

@@ -21,9 +21,12 @@ public:
     void StartShowAnim(int left, int top, int width, int height);
 
 signals:
+    void hide_();
+    void show_();
 
 public slots:
     void drawButton();
+    void animatedHide();
 
 private:
     QPropertyAnimation * animation;

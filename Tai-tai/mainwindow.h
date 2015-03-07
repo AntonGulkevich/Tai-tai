@@ -30,13 +30,13 @@ public:
     MainWindow(QWidget *parent = 0);
     void setGrayBackground();
     void setWhiteBackground();
-    void setOverlay();
+
     ~MainWindow();
 private slots:
     void btnPressed();
     void btnReleased();
     void showOverLay();
-
+    void hideOverLay();
 };
 
 #endif // MAINWINDOW_H

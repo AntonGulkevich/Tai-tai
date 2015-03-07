@@ -61,6 +61,8 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     testExButton->addSubbButton("Exit", ":/resourses/icons/ch_right.png", 10);
     testExButton->addSubbButton("Help", ":/resourses/icons/down_def.png", 10);
 
+    connect(testExButton->getSubButton(0), SIGNAL(clicked()), this, SLOT(animatedHide()));
+    hide();
 }
 ProfileWindow::~ProfileWindow(){
 
@@ -79,6 +81,11 @@ void ProfileWindow::drawButton(){
 
 
 }
+
+void ProfileWindow::animatedHide(){
+    StartHideAnim(0, 0, width(), height());
+    emit hide_();
+}
 void ProfileWindow::StartHideAnim(int left, int top, int width, int height){
 
     animation = new QPropertyAnimation(this, "geometry");
@@ -87,6 +94,7 @@ void ProfileWindow::StartHideAnim(int left, int top, int width, int height){
     animation->setEndValue(QRect(left, top, 1, height));
 
     animation->start(QAbstractAnimation::DeleteWhenStopped);
+    connect (animation, SIGNAL(finished()), this, SLOT(hide()));
 
 }
 

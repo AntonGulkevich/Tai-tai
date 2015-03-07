@@ -16,15 +16,13 @@ SOURCES += main.cpp\
     agbutton.cpp \
     profilewindow.cpp \
     exlabel.cpp \
-    exbutton.cpp \
-    glass.cpp
+    exbutton.cpp
 
 HEADERS  += mainwindow.h \
     agbutton.h \
     profilewindow.h \
     exlabel.h \
-    exbutton.h \
-    glass.h
+    exbutton.h
 
 RESOURCES += \
     icons.qrc

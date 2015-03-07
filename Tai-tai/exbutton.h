@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <QPropertyAnimation>
 #include <math.h>
+#include <QDebug>
 
 class ExButton :  public QFrame
 {
@@ -24,11 +25,14 @@ public:
     void setRotation(int degree);
     void preview();
     void setImageMargin(int margin);
+    ExButton *getSubButton(int number);
 
 signals:
     void clicked();
+    void rightClicked();
 public slots:
     void OnClick();
+    void onRightClicked();
     void Locked();
     void Unlocked();
     void Redraw(QVariant var);
@@ -39,6 +43,7 @@ protected:
     virtual void enterEvent(QEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
     virtual void moveEvent(QMoveEvent *event);
+    //virtual void mouseDoubleClickEvent(QMouseEvent *event);
 private:
     QString Caption;
     int Radius;
