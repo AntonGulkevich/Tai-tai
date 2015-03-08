@@ -26,3 +26,5 @@ HEADERS  += mainwindow.h \
 
 RESOURCES += \
     icons.qrc
+
+OTHER_FILES +=

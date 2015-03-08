@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QPropertyAnimation>
+#include <QLineEdit>
 
 #include "exlabel.h"
 #include "exbutton.h"
@@ -28,12 +29,27 @@ signals:
 public slots:
     void drawButton();
     void animatedHide();
+    void setButton1();
+    void setButton2();
+    void setButton3();
+    void setButton4();
+    void setButton5();
+    void setButton6();
 
 private:
     QPropertyAnimation * animation;
     QBoxLayout * bigLay;
     QBoxLayout * topLay;
     QBoxLayout * botLay;
+
+    GroupExButtons* groupEx;
+
+    ExButton *testExButton;
+    ExButton *createExButton;
+    ExButton *deleteExButton;
+    ExButton *editExButton;
+    ExButton *exitExButton;
+    ExButton *helpExButton;
 
 };
 

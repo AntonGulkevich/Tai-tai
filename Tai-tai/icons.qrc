@@ -59,6 +59,12 @@
         <file>../resourses/icons/ch_left.png</file>
         <file>../resourses/icons/ch_right.png</file>
         <file>../resourses/icons/ch_up.png</file>
+        <file>../resourses/icons/edit_acc.png</file>
+        <file>../resourses/icons/logout_acc.png</file>
+        <file>../resourses/icons/info_acc.png</file>
+        <file>../resourses/icons/logout_acc2.png</file>
+        <file>../resourses/icons/logout_acc3.png</file>
+        <file>../resourses/icons/login_acc.png</file>
     </qresource>
     <qresource prefix="/../resourses/icons"/>
     <qresource prefix="/resourses/icons"/>

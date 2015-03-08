@@ -19,15 +19,15 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     bigLay->addLayout(topLay, 1);
     bigLay->addLayout(botLay, 1);
 
-    ExLabel *profileNameLabel = new ExLabel("default");
+    ExLabel *profileNameLabel = new ExLabel("DEFAULT PROFILE");
     ExLabel *profileAvaLabel = new ExLabel("AVA");
-    ExLabel *profilePasswordLabel = new ExLabel("password");
 
+    QLineEdit * profilePasswordEdit = new QLineEdit("*******");
 
-    profileAvaLabel->setStyleSheet("QLabel{border: 1px solid gray; padding: 1px}");
+    profileAvaLabel->setStyleSheet("QLabel{border: 1px solid gray;}");
 
-    profileNameLabel->setMaximumSize(220, 20);
-    profilePasswordLabel->setMaximumSize(220, 20);
+    profileNameLabel->setMaximumSize(200, 20);
+    profilePasswordEdit->setFixedSize(200, 20);
 
     profileAvaLabel->setMaximumSize(200, 220);
     QPixmap avadef(":/resourses/icons/ava_def.jpg");
@@ -38,43 +38,44 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     topLay->addStretch(1);
     topLay->addWidget(profileNameLabel, 0, Qt::AlignHCenter);
     topLay->addWidget(profileAvaLabel, 1, Qt::AlignHCenter);
-    topLay->addWidget(profilePasswordLabel, 0, Qt::AlignHCenter);
+    topLay->addWidget(profilePasswordEdit, 0, Qt::AlignHCenter);
     topLay->addStretch(1);
-    topLay->setSpacing(10);
+    topLay->setSpacing(0);
     topLay->setMargin(10);
 
     botLay->addStretch(1);
 
-    ExButton *testExButton = new ExButton(this,  "Profile", 50, 0);
-    //testExButton->setWindowFlags(Qt::WindowStaysOnTopHint);
+    int margin =5;
 
+    testExButton = new ExButton(this,  "Login", 50, 0);
     testExButton->move(800/4-100+50/2, 600/2+50/2+50);
     testExButton->setRotation(201);
-    testExButton->setImage(":/resourses/icons/more.png");
-    testExButton->setImageMargin(10);
-    testExButton->setToolTip("hello");
+    testExButton->setImage(":/resourses/icons/login_acc.png");
+    testExButton->setImageMargin(margin);
+    testExButton->setToolTip("Login in current account.");
 
-    ExButton *createExButton = new ExButton(this,  "Create", 50, 1);
+    createExButton = new ExButton(this,  "Create", 50, 1);
     createExButton->setImage(":/resourses/icons/create_acc.png");
-    createExButton->setImageMargin(10);
+    createExButton->setImageMargin(margin);
 
-    ExButton *deleteExButton = new ExButton(this,  "Delete", 50, 1);
+    deleteExButton = new ExButton(this,  "Delete", 50, 1);
     deleteExButton->setImage(":/resourses/icons/delete_acc.png");
-    deleteExButton->setImageMargin(10);
+    deleteExButton->setImageMargin(margin);
 
-    ExButton *editExButton = new ExButton(this,  "Edit", 50, 1);
-    editExButton->setImage(":/resourses/icons/ch_left.png");
-    editExButton->setImageMargin(10);
+    editExButton = new ExButton(this,  "Edit", 50, 1);
+    editExButton->setImage(":/resourses/icons/edit_acc.png");
+    editExButton->setImageMargin(margin);
 
-    ExButton *exitExButton = new ExButton(this,  "Exit", 50, 1);
-    exitExButton->setImage(":/resourses/icons/ch_right.png");
-    exitExButton->setImageMargin(10);
+    exitExButton = new ExButton(this,  "Logout", 50, 1);
+    exitExButton->setImage(":/resourses/icons/logout_acc3.png");
+    exitExButton->setImageMargin(margin);
 
-    ExButton *helpExButton = new ExButton(this,  "Help", 50, 1);
-    helpExButton->setImage(":/resourses/icons/down_def.png");
-    helpExButton->setImageMargin(10);
+    helpExButton = new ExButton(this,  "Info", 50, 1);
+    helpExButton->setImage(":/resourses/icons/info_acc.png");
+    helpExButton->setImageMargin(margin);
 
-    GroupExButtons* groupEx = new GroupExButtons();
+    groupEx = new GroupExButtons();
+
     groupEx->setDefaultButton(testExButton);
     groupEx->addButton(createExButton);
     groupEx->addButton(deleteExButton);
@@ -82,7 +83,12 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     groupEx->addButton(exitExButton);
     groupEx->addButton(helpExButton);
 
-
+    connect(testExButton, SIGNAL(clicked()), this, SLOT(setButton1()));
+    connect(createExButton, SIGNAL(clicked()), this, SLOT(setButton2()));
+    connect(helpExButton, SIGNAL(clicked()), this, SLOT(setButton3()));
+    connect(deleteExButton, SIGNAL(clicked()), this, SLOT(setButton4()));
+    connect(editExButton, SIGNAL(clicked()), this, SLOT(setButton5()));
+    connect(exitExButton, SIGNAL(clicked()), this, SLOT(setButton6()));
 
 
 
@@ -109,6 +115,35 @@ void ProfileWindow::drawButton(){
 void ProfileWindow::animatedHide(){
     StartHideAnim(0, 0, width(), height());
     emit hide_();
+}
+
+void ProfileWindow::setButton1(){
+    groupEx->setDefaultButton(testExButton);
+}
+
+void ProfileWindow::setButton2()
+{
+    groupEx->setDefaultButton(createExButton);
+}
+
+void ProfileWindow::setButton3()
+{
+    groupEx->setDefaultButton(helpExButton);
+}
+
+void ProfileWindow::setButton4()
+{
+    groupEx->setDefaultButton(deleteExButton);
+}
+
+void ProfileWindow::setButton5()
+{
+    groupEx->setDefaultButton(editExButton);
+}
+
+void ProfileWindow::setButton6()
+{
+    groupEx->setDefaultButton(exitExButton);
 }
 void ProfileWindow::StartHideAnim(int left, int top, int width, int height){
 

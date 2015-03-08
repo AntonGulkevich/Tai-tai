@@ -1,6 +1,7 @@
 #include "groupexbuttons.h"
 
 GroupExButtons::GroupExButtons(){
+    defaultButton=NULL;
 }
 
 GroupExButtons::~GroupExButtons(){
@@ -8,6 +9,11 @@ GroupExButtons::~GroupExButtons(){
 }
 
 void GroupExButtons::addButton(ExButton *button){
+
+    button->hide();
+    button->move(defaultButton->geometry().left(), defaultButton->geometry().top() );
+    qDebug()<<QString::number(defaultButton->geometry().left())+" "+QString::number(defaultButton->geometry().top());
+    connect(button, SIGNAL(clicked()), this, SLOT(startAnimation()));
     subButtons.append(button);
 }
 
@@ -23,7 +29,20 @@ bool GroupExButtons::delButton(const QString &caption){
 }
 
 void GroupExButtons::setDefaultButton(ExButton *button){
+
+    if (defaultButton!=NULL){
+        disconnect(defaultButton, SIGNAL(rightClicked()), this , SLOT(startAnimation()));
+        disconnect(defaultButton, SIGNAL(mouseEntered()), this, SLOT(onMouseEnter()));
+        disconnect(defaultButton, SIGNAL(mouseLeaved()), this, SLOT(onMouseLeave()));
+        button->move(defaultButton->geometry().left(), defaultButton->geometry().top() );
+        defaultButton->lower();
+        button->setRotation(defaultButton->getRotation());
+        addButton(defaultButton);
+
+    }
+
     defaultButton = button;
+    defaultButton->show();
     connect(defaultButton, SIGNAL(rightClicked()), this , SLOT(startAnimation()));
     connect(defaultButton, SIGNAL(mouseEntered()), this, SLOT(onMouseEnter()));
     connect(defaultButton, SIGNAL(mouseLeaved()), this, SLOT(onMouseLeave()));

@@ -20,8 +20,8 @@ ExLabel::ExLabel(const QString &text, QWidget *parent) :
     activeFont->setUnderline(true);
 
     setStyleSheet("QLabel{border: 0 px}");
-    activeStyleSheet="QLabel{border: 2px solid gray; padding: 1px}";
-    inActiveStyleSheet="QLabel{border: 1px solid gray; padding: 1px}";
+    activeStyleSheet="QLabel{border: 3px solid gray;}";
+    inActiveStyleSheet="QLabel{border: 1px solid gray;}";
 
     active=false;
 }
