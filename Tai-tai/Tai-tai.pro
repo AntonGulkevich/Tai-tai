@@ -13,16 +13,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    agbutton.cpp \
     profilewindow.cpp \
     exlabel.cpp \
-    exbutton.cpp
+    exbutton.cpp \
+    groupexbuttons.cpp
 
 HEADERS  += mainwindow.h \
-    agbutton.h \
     profilewindow.h \
     exlabel.h \
-    exbutton.h
+    exbutton.h \
+    groupexbuttons.h
 
 RESOURCES += \
     icons.qrc

@@ -45,8 +45,7 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
 
     botLay->addStretch(1);
 
-    QString profileName = "Profile";
-    ExButton *testExButton = new ExButton(this,  profileName, 50);
+    ExButton *testExButton = new ExButton(this,  "Profile", 50, 0);
     //testExButton->setWindowFlags(Qt::WindowStaysOnTopHint);
 
     testExButton->move(800/4-100+50/2, 600/2+50/2+50);
@@ -55,13 +54,38 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     testExButton->setImageMargin(10);
     testExButton->setToolTip("hello");
 
-    testExButton->addSubbButton("Create", ":/resourses/icons/create_acc.png", 10);
-    testExButton->addSubbButton("Delete", ":/resourses/icons/delete_acc.png", 10);
-    testExButton->addSubbButton("Edit", ":/resourses/icons/ch_left.png", 10);
-    testExButton->addSubbButton("Exit", ":/resourses/icons/ch_right.png", 10);
-    testExButton->addSubbButton("Help", ":/resourses/icons/down_def.png", 10);
+    ExButton *createExButton = new ExButton(this,  "Create", 50, 1);
+    createExButton->setImage(":/resourses/icons/create_acc.png");
+    createExButton->setImageMargin(10);
 
-    connect(testExButton->getSubButton(0), SIGNAL(clicked()), this, SLOT(animatedHide()));
+    ExButton *deleteExButton = new ExButton(this,  "Delete", 50, 1);
+    deleteExButton->setImage(":/resourses/icons/delete_acc.png");
+    deleteExButton->setImageMargin(10);
+
+    ExButton *editExButton = new ExButton(this,  "Edit", 50, 1);
+    editExButton->setImage(":/resourses/icons/ch_left.png");
+    editExButton->setImageMargin(10);
+
+    ExButton *exitExButton = new ExButton(this,  "Exit", 50, 1);
+    exitExButton->setImage(":/resourses/icons/ch_right.png");
+    exitExButton->setImageMargin(10);
+
+    ExButton *helpExButton = new ExButton(this,  "Help", 50, 1);
+    helpExButton->setImage(":/resourses/icons/down_def.png");
+    helpExButton->setImageMargin(10);
+
+    GroupExButtons* groupEx = new GroupExButtons();
+    groupEx->setDefaultButton(testExButton);
+    groupEx->addButton(createExButton);
+    groupEx->addButton(deleteExButton);
+    groupEx->addButton(editExButton);
+    groupEx->addButton(exitExButton);
+    groupEx->addButton(helpExButton);
+
+
+
+
+
     hide();
 }
 ProfileWindow::~ProfileWindow(){

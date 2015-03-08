@@ -1,6 +1,6 @@
 #include "exbutton.h"
 
-ExButton::ExButton(QWidget *parent, const QString &caption, int r) :
+ExButton::ExButton(QWidget *parent, const QString &caption, int r, bool subButton) :
     QFrame(parent), Caption(caption)
 {
     isMaxed=true;
@@ -53,6 +53,13 @@ ExButton::ExButton(QWidget *parent, const QString &caption, int r) :
 
     setMaximumSize(Radius,Radius);
     setMinimumSize(SmallRadius, SmallRadius);
+
+    isLocked=false;
+
+    if (subButton){
+        lower();
+        hide();
+    }
     rotation=0;
 }
 
@@ -63,11 +70,18 @@ ExButton::~ExButton(){
         delete captionExLabel;
     if (mainLay)
         delete mainLay;
-    subButtons.clear();
 }
 void ExButton::setCaption(const QString &caption){
     Caption =caption;
     captionExLabel->setText(Caption);
+}
+
+void ExButton::setFullCaption(){
+    captionExLabel->setText(Caption);
+}
+
+void ExButton::setShortCaption(){
+    captionExLabel->setText(Caption.at(0));
 }
 
 void ExButton::setImage(const QString &image){
@@ -82,144 +96,67 @@ void ExButton::setRadius(int radius){
 void ExButton::setSmallRadius(int radius){
     SmallRadius=radius;
 }
-
-void ExButton::addSubbButton(const QString &caption, const QString &imageWay, int margin)
-{
-    ExButton *subButton = new ExButton(this->parentWidget(), caption, Radius);
-    subButton->setGeometry(this->geometry());
-    subButton->setWindowFlags(Qt::WindowStaysOnBottomHint);
-    subButton->lower();
-    subButton->hide();
-    subButton->imageLabel->setMargin(margin);
-    subButton->setImage(imageWay);
-    //connect(subButton, SIGNAL(clicked()), this, SLOT(OnClick()));
-    subButtons.append(subButton);
-}
-
-void ExButton::open(int scale, int duration){
-    int k;
-    int buttonCount;
-    double angleUnit;
-    double koef;
-    int top;
-    int left;
-
-
-    k=scale;
-    buttonCount= subButtons.count();
-    scale = buttonCount*Radius/6.18*scale;
-    angleUnit = 6.18/buttonCount;
-    koef = 3.14*2/360*rotation/5;
-
-    top=this->geometry().top();
-    left=this->geometry().left();
-
-
-    for (int i=0; i<buttonCount; i++){
-        ExButton * btn = subButtons.at(i);
-        btn->show();
-        btn->Locked();
-        btn->isMaxed=true;
-        btn->captionExLabel->setText(btn->Caption);
-        btn->imageLabel->setVisible(true);
-        btn->captionExLabel->setVisible(false);
-        QPropertyAnimation * ani = new QPropertyAnimation(btn, "geometry", this);
-        ani->setDuration(duration);
-        ani->setEasingCurve(QEasingCurve::OutExpo);
-        if(k==1){
-            if (scale<Radius){
-                scale=Radius;
-            }
-
-            ani->setKeyValueAt(0.2, QRect(cos(angleUnit*i+koef*1)*scale*0.2+left,
-                                          sin(angleUnit*i+koef*1)*scale*0.2+top, Radius, Radius));
-            ani->setKeyValueAt(0.4, QRect(cos(angleUnit*i+koef*2)*scale*0.4+left,
-                                          sin(angleUnit*i+koef*2)*scale*0.4+top, Radius, Radius));
-            ani->setKeyValueAt(0.6, QRect(cos(angleUnit*i+koef*3)*scale*0.6+left,
-                                          sin(angleUnit*i+koef*3)*scale*0.6+top, Radius, Radius));
-            ani->setKeyValueAt(0.8, QRect(cos(angleUnit*i+koef*4)*scale*0.8+left,
-                                          sin(angleUnit*i+koef*4)*scale*0.8+top, Radius, Radius));
-        }
-        ani->setEndValue(QRectF(cos(angleUnit*i+koef*5)*scale+left,
-                                sin(angleUnit*i+koef*5)*scale+top, Radius, Radius));
-        connect(ani, SIGNAL(finished()), btn, SLOT(Unlocked()));
-        ani->start(QAbstractAnimation::DeleteWhenStopped);
-    }
-}
-void ExButton::close(int scale,int duration){
-    int buttonCount= subButtons.count();
-    int top;
-    int left;
-
-    top=this->geometry().top();
-    left=this->geometry().left();
-    for (int i=0; i<buttonCount; i++){
-        ExButton * btn = subButtons.at(i);
-        btn->Locked();
-        QPropertyAnimation * ani = new QPropertyAnimation(btn, "geometry", this);
-        ani->setDuration(duration);
-        ani->setEasingCurve(QEasingCurve::InExpo);
-        ani->setEndValue(QRectF(left+scale,top+scale, Radius, Radius));
-        connect(ani, SIGNAL(finished()), btn, SLOT(Unlocked()));
-        connect(ani, SIGNAL(finished()), btn, SLOT(hide()));
-        ani->start(QAbstractAnimation::DeleteWhenStopped);
-    }
-}
-
 void ExButton::setRotation(int degree)
 {
     rotation=degree;
-}
-
-void ExButton::preview()
-{
-    int buttonCount= 3;
-    int scale = 5;
-    int duration =200;
-    int top;
-    int left;
-
-    double angleUnit = 6.18/buttonCount;
-    double koef = 3.14*2/360*rotation;
-    top=this->geometry().top();
-    left=this->geometry().left();
-
-
-    for (int i=0; i<buttonCount; i++){
-        ExButton * btn = subButtons.at(i);
-        btn->Locked();
-        btn->show();
-        btn->imageLabel->setVisible(false);
-        QPropertyAnimation * ani = new QPropertyAnimation(btn, "geometry", this);
-        ani->setDuration(duration);
-        ani->setEasingCurve(QEasingCurve::OutExpo);
-        ani->setEndValue(QRectF(cos(angleUnit*i+koef)*scale+left,
-                                sin(angleUnit*i+koef)*scale+top, Radius, Radius));
-        connect(ani, SIGNAL(finished()), btn, SLOT(Unlocked()));
-        ani->start(QAbstractAnimation::DeleteWhenStopped);
-    }
 }
 
 void ExButton::setImageMargin(int margin){
     imageLabel->setMargin(margin);
 }
 
-ExButton *ExButton::getSubButton(int number)
+QString ExButton::getCaption()
 {
-    int buttonCount= subButtons.count();
-    if (buttonCount<number){
-        return NULL;
-    }
-    else
-        return subButtons.at(number);
+    return Caption;
+}
+
+int ExButton::getRadius()
+{
+    return Radius;
+}
+
+int ExButton::getSmallRadius()
+{
+    return SmallRadius;
+}
+
+void ExButton::setImageVisible(bool state)
+{
+    imageLabel->setVisible(state);
+}
+
+void ExButton::setCaptionVisible(bool state)
+{
+    captionExLabel->setVisible(state);
+}
+
+int ExButton::getRotation()
+{
+    return rotation;
+}
+
+void ExButton::setIsMaxed(bool state)
+{
+    isMaxed = state;
+}
+
+bool ExButton::isMaximum(){
+    return isMaxed;
+}
+
+bool ExButton::IsLocked(){
+    return isLocked;
 }
 
 void ExButton::OnClick(){
-
     emit clicked();
 }
 
 void ExButton::onRightClicked(){
+    if (isLocked){
+        qDebug()<<"locked";
+        return;
+    }
     int top;
     int left;
     int radOffset;
@@ -228,36 +165,26 @@ void ExButton::onRightClicked(){
     isMaxed=!isMaxed;
     Locked();
     QPropertyAnimation *animation;
+    animation = new QPropertyAnimation(this, "geometry");
+    animation->setDuration(300);
+    animation->setEasingCurve(QEasingCurve::InCubic);
 
     top=this->geometry().top();
     left=this->geometry().left();
 
     if(!isMaxed){
-        open(1, 500);
-
-        animation = new QPropertyAnimation(this, "geometry", this);
-        animation->setDuration(300);
-        animation->setEasingCurve(QEasingCurve::InCubic);
         animation->setStartValue(QRect(left,top,Radius, Radius ));
         animation->setEndValue(QRect(left+radOffset, top+radOffset, SmallRadius, SmallRadius));
-        animation->start(QAbstractAnimation::DeleteWhenStopped);
-
-        connect(animation, SIGNAL(finished()), this, SLOT(Unlocked()));
-        captionExLabel->setText(Caption.at(0));
+        setShortCaption();
     }
     else{
-        close(-radOffset, 300);
-
-        animation = new QPropertyAnimation(this, "geometry");
-        animation->setDuration(300);
-        animation->setEasingCurve(QEasingCurve::InCubic);
         animation->setStartValue(QRect(left,top,SmallRadius, SmallRadius ));
         animation->setEndValue(QRect(left-radOffset, top-radOffset, Radius, Radius));
-        animation->start(QAbstractAnimation::DeleteWhenStopped);
-
-        connect(animation, SIGNAL(finished()), this, SLOT(Unlocked()));
-        captionExLabel->setText(Caption);
+        setFullCaption();
     }
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+    connect(animation, SIGNAL(finished()), this, SLOT(Unlocked()));
+
     if (isMaxed){
         setStyleSheet(defaultSSBig+hoverSS+"QWidget{border-width:1px;}");
     }
@@ -267,13 +194,11 @@ void ExButton::onRightClicked(){
     emit rightClicked();
 }
 
-void ExButton::Locked()
-{
+void ExButton::Locked(){
     isLocked=true;
 }
 
-void ExButton::Unlocked()
-{
+void ExButton::Unlocked(){
     isLocked=false;
 }
 
@@ -299,6 +224,7 @@ void ExButton::mouseReleaseEvent(QMouseEvent* pe){
    }
 }
 void ExButton::enterEvent(QEvent *event){
+    emit mouseEntered();
     int r, left, top;
     left = imageLabel->geometry().left();
     top = imageLabel->geometry().top();
@@ -319,12 +245,9 @@ void ExButton::enterEvent(QEvent *event){
         r=SmallRadius;
 
     }
-    int buttonCount = subButtons.count();
-
-    if (buttonCount&&isMaxed&&!isLocked)
-        preview();
 }
 void ExButton::leaveEvent(QEvent *event){
+    emit mouseLeaved();
     int r;
     if (isMaxed){
         setStyleSheet(defaultSSBig);
@@ -342,10 +265,6 @@ void ExButton::leaveEvent(QEvent *event){
         setStyleSheet(defaultSSSmall);
         r=SmallRadius;
 
-    }
-    int buttonCount = subButtons.count();
-    if (buttonCount>0&&isMaxed&&!isLocked){
-       close(0, 300);
     }
 }
 void ExButton::resizeEvent(QResizeEvent *event){

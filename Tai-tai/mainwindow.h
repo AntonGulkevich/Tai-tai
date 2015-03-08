@@ -8,7 +8,6 @@
 #include <QPushButton>
 #include <QGraphicsOpacityEffect>
 
-#include "agbutton.h"
 #include "profilewindow.h"
 #include "exbutton.h"
 

@@ -10,6 +10,7 @@
 
 #include "exlabel.h"
 #include "exbutton.h"
+#include "groupexbuttons.h"
 
 class ProfileWindow : public QFrame
 {

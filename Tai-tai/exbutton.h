@@ -13,23 +13,30 @@ class ExButton :  public QFrame
 {
     Q_OBJECT
 public:
-    explicit ExButton(QWidget *parent = 0,  const QString & caption="ExButton", int r=60);
+    explicit ExButton(QWidget *parent = 0,  const QString & caption="ExButton", int r=60, bool subButton = false);
     ~ExButton();
     void setCaption(const QString & caption);
+    void setFullCaption();
+    void setShortCaption();
     void setImage(const QString &image);
     void setRadius(int radius);
     void setSmallRadius(int radius);
-    void addSubbButton(const QString & caption, const QString & imageWay, int margin);
-    void open(int scale, int duration);
-    void close(int scale,int duration);
     void setRotation(int degree);
-    void preview();
     void setImageMargin(int margin);
-    ExButton *getSubButton(int number);
-
+    QString getCaption();
+    int getRadius();
+    int getSmallRadius();
+    void setImageVisible(bool state);
+    void setCaptionVisible(bool state);
+    int getRotation();
+    void setIsMaxed(bool state);
+    bool isMaximum();
+    bool IsLocked();
 signals:
     void clicked();
     void rightClicked();
+    void mouseEntered();
+    void mouseLeaved();
 public slots:
     void OnClick();
     void onRightClicked();
@@ -62,9 +69,7 @@ private:
 
     QString pressedSSSmall;
     QString defaultSSSmall;
-
-    QList <ExButton*> subButtons;
-
 };
 
 #endif // EXBUTTON_H
+
