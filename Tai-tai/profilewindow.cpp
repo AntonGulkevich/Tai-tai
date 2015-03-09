@@ -83,15 +83,6 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     groupEx->addButton(exitExButton);
     groupEx->addButton(helpExButton);
 
-    connect(testExButton, SIGNAL(clicked()), this, SLOT(setButton1()));
-    connect(createExButton, SIGNAL(clicked()), this, SLOT(setButton2()));
-    connect(helpExButton, SIGNAL(clicked()), this, SLOT(setButton3()));
-    connect(deleteExButton, SIGNAL(clicked()), this, SLOT(setButton4()));
-    connect(editExButton, SIGNAL(clicked()), this, SLOT(setButton5()));
-    connect(exitExButton, SIGNAL(clicked()), this, SLOT(setButton6()));
-
-
-
     hide();
 }
 ProfileWindow::~ProfileWindow(){
@@ -117,34 +108,6 @@ void ProfileWindow::animatedHide(){
     emit hide_();
 }
 
-void ProfileWindow::setButton1(){
-    groupEx->setDefaultButton(testExButton);
-}
-
-void ProfileWindow::setButton2()
-{
-    groupEx->setDefaultButton(createExButton);
-}
-
-void ProfileWindow::setButton3()
-{
-    groupEx->setDefaultButton(helpExButton);
-}
-
-void ProfileWindow::setButton4()
-{
-    groupEx->setDefaultButton(deleteExButton);
-}
-
-void ProfileWindow::setButton5()
-{
-    groupEx->setDefaultButton(editExButton);
-}
-
-void ProfileWindow::setButton6()
-{
-    groupEx->setDefaultButton(exitExButton);
-}
 void ProfileWindow::StartHideAnim(int left, int top, int width, int height){
 
     animation = new QPropertyAnimation(this, "geometry");

@@ -11,9 +11,10 @@ GroupExButtons::~GroupExButtons(){
 void GroupExButtons::addButton(ExButton *button){
 
     button->hide();
+    button->lower();
     button->move(defaultButton->geometry().left(), defaultButton->geometry().top() );
     qDebug()<<QString::number(defaultButton->geometry().left())+" "+QString::number(defaultButton->geometry().top());
-    connect(button, SIGNAL(clicked()), this, SLOT(startAnimation()));
+    connect(button, SIGNAL(leftClicked()), this, SLOT(startAnimation()));
     subButtons.append(button);
 }
 
@@ -34,8 +35,8 @@ void GroupExButtons::setDefaultButton(ExButton *button){
         disconnect(defaultButton, SIGNAL(rightClicked()), this , SLOT(startAnimation()));
         disconnect(defaultButton, SIGNAL(mouseEntered()), this, SLOT(onMouseEnter()));
         disconnect(defaultButton, SIGNAL(mouseLeaved()), this, SLOT(onMouseLeave()));
-        button->move(defaultButton->geometry().left(), defaultButton->geometry().top() );
-        defaultButton->lower();
+       // button->move(defaultButton->geometry().left(), defaultButton->geometry().top() );
+        button->setGeometry(defaultButton->geometry());
         button->setRotation(defaultButton->getRotation());
         addButton(defaultButton);
 
@@ -179,7 +180,7 @@ void GroupExButtons::startAnimation(){
 
     radOffset = defaultButton->getRadius()/2-defaultButton->getSmallRadius()/2;
 
-    if (!defaultButton->isMaximum()){
+    if (defaultButton->isMaximum()){
         showAnimated(1, 500);
     }
     else{

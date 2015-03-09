@@ -29,12 +29,6 @@ signals:
 public slots:
     void drawButton();
     void animatedHide();
-    void setButton1();
-    void setButton2();
-    void setButton3();
-    void setButton4();
-    void setButton5();
-    void setButton6();
 
 private:
     QPropertyAnimation * animation;

@@ -33,13 +33,12 @@ public:
     bool isMaximum();
     bool IsLocked();
 signals:
-    void clicked();
     void rightClicked();
+    void leftClicked();
     void mouseEntered();
     void mouseLeaved();
 public slots:
     void OnClick();
-    void onRightClicked();
     void Locked();
     void Unlocked();
     void Redraw(QVariant var);

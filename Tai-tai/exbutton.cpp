@@ -149,10 +149,6 @@ bool ExButton::IsLocked(){
 }
 
 void ExButton::OnClick(){
-    emit clicked();
-}
-
-void ExButton::onRightClicked(){
     if (isLocked){
         qDebug()<<"locked";
         return;
@@ -191,7 +187,6 @@ void ExButton::onRightClicked(){
     else{
         setStyleSheet(defaultSSSmall+hoverSS+"QWidget{border-width:1px;}");
     }
-    emit rightClicked();
 }
 
 void ExButton::Locked(){
@@ -215,13 +210,13 @@ void ExButton::mousePressEvent(QMouseEvent* pe ){
     }
 }
 void ExButton::mouseReleaseEvent(QMouseEvent* pe){
-   if (!isLocked&&(pe->button()==Qt::RightButton)){
-        onRightClicked();
-   }
-   else{
-       if (!isLocked)
-            OnClick();
-   }
+    if (!isLocked&&(pe->button()==Qt::RightButton)){
+        emit rightClicked();
+    }
+    if (!isLocked&&(pe->button()==Qt::LeftButton)){
+        emit leftClicked();
+    }
+    OnClick();
 }
 void ExButton::enterEvent(QEvent *event){
     emit mouseEntered();
