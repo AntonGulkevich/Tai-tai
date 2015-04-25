@@ -27,13 +27,15 @@ private:
 
 public:
     MainWindow(QWidget *parent = 0);
+    ~MainWindow();
     void setGrayBackground();
     void setWhiteBackground();
 
-    ~MainWindow();
+
 private slots:
-    void btnPressed();
-    void btnReleased();
+    void showProfileWindow();
+    void hideProfileWindow();
+
     void showOverLay();
     void hideOverLay();
 };

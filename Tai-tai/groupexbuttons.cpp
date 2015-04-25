@@ -9,13 +9,18 @@ GroupExButtons::~GroupExButtons(){
 }
 
 void GroupExButtons::addButton(ExButton *button){
-
-    button->hide();
-    button->lower();
-    button->move(defaultButton->geometry().left(), defaultButton->geometry().top() );
-    qDebug()<<QString::number(defaultButton->geometry().left())+" "+QString::number(defaultButton->geometry().top());
-    connect(button, SIGNAL(leftClicked()), this, SLOT(startAnimation()));
-    subButtons.append(button);
+    if (defaultButton==NULL){
+        defaultButton = button;
+        connect(defaultButton, SIGNAL(rightClicked()), this , SLOT(startAnimation()));
+        connect(defaultButton, SIGNAL(mouseEntered()), this, SLOT(onMouseEnter()));
+        connect(defaultButton, SIGNAL(mouseLeaved()), this, SLOT(onMouseLeave()));
+    }
+    else{
+        button->hide();
+        button->lower();
+        button->move(defaultButton->geometry().left(), defaultButton->geometry().top() );
+        subButtons.append(button);
+    }
 }
 
 bool GroupExButtons::delButton(const QString &caption){
@@ -29,20 +34,26 @@ bool GroupExButtons::delButton(const QString &caption){
     return false;
 }
 
-void GroupExButtons::setDefaultButton(ExButton *button){
+void GroupExButtons::setDefaultButton(const QString & caption){
+    if (defaultButton->getCaption()==caption){
+        return;
+    }
+    ExButton * tempButton = takeAt(caption);
+
+    if (tempButton==NULL){
+        return;
+    }
 
     if (defaultButton!=NULL){
         disconnect(defaultButton, SIGNAL(rightClicked()), this , SLOT(startAnimation()));
         disconnect(defaultButton, SIGNAL(mouseEntered()), this, SLOT(onMouseEnter()));
         disconnect(defaultButton, SIGNAL(mouseLeaved()), this, SLOT(onMouseLeave()));
-       // button->move(defaultButton->geometry().left(), defaultButton->geometry().top() );
-        button->setGeometry(defaultButton->geometry());
-        button->setRotation(defaultButton->getRotation());
+        tempButton->setRotation(defaultButton->getRotation());
+        defaultButton->swapButtonsGeometry(tempButton);
         addButton(defaultButton);
-
     }
-
-    defaultButton = button;
+    defaultButton = tempButton;
+    defaultButton->raise();
     defaultButton->show();
     connect(defaultButton, SIGNAL(rightClicked()), this , SLOT(startAnimation()));
     connect(defaultButton, SIGNAL(mouseEntered()), this, SLOT(onMouseEnter()));
@@ -74,8 +85,7 @@ void GroupExButtons::showAnimated(int scale, int duration){
     for (int i=0; i<buttonCount; i++){
         ExButton * btn = subButtons.at(i);
         btn->show();
-        btn->Locked();
-        btn->setIsMaxed(true);
+        btn->blockAnimation();
         btn->setFullCaption();
         btn->setImageVisible(true);
         btn->setCaptionVisible(false);
@@ -98,7 +108,7 @@ void GroupExButtons::showAnimated(int scale, int duration){
         }
         ani->setEndValue(QRectF(cos(angleUnit*i+koef*5)*scale+left,
                                 sin(angleUnit*i+koef*5)*scale+top, Radius, Radius));
-        connect(ani, SIGNAL(finished()), btn, SLOT(Unlocked()));
+        connect(ani, SIGNAL(finished()), btn, SLOT(unBlockAnimation()));
         ani->start(QAbstractAnimation::DeleteWhenStopped);
     }
 
@@ -121,13 +131,14 @@ void GroupExButtons::hideAnimated(int scale, int duration){
 
     for (int i=0; i<buttonCount; i++){
         ExButton * btn = subButtons.at(i);
-        btn->Locked();
+        btn->blockAnimation();
         QPropertyAnimation * ani = new QPropertyAnimation(btn, "geometry", this);
         ani->setDuration(duration);
         ani->setEasingCurve(QEasingCurve::InExpo);
         ani->setEndValue(QRectF(left+scale,top+scale, Radius, Radius));
-        connect(ani, SIGNAL(finished()), btn, SLOT(Unlocked()));
+        connect(ani, SIGNAL(finished()), btn, SLOT(unBlockAnimation()));
         connect(ani, SIGNAL(finished()), btn, SLOT(hide()));
+        connect(ani, SIGNAL(finished()), btn, SLOT(setDefaultSS()));
         ani->start(QAbstractAnimation::DeleteWhenStopped);
     }
 
@@ -136,10 +147,17 @@ void GroupExButtons::hideAnimated(int scale, int duration){
 
 void GroupExButtons::preview(int scale/*5*/, int duration/*200*/)
 {
-    int buttonCount= 3;
+    int buttonCount;
     int top;
     int left;
     int Radius;
+
+    if (subButtons.count()>=3){
+        buttonCount=3;
+    }
+    else{
+        buttonCount=subButtons.count();
+    }
 
     double angleUnit = 6.18/buttonCount;
     double koef = 3.14*2/360*defaultButton->getRotation();
@@ -151,7 +169,7 @@ void GroupExButtons::preview(int scale/*5*/, int duration/*200*/)
 
     for (int i=0; i<buttonCount; i++){
         ExButton * btn = subButtons.at(i);
-        btn->Locked();
+        btn->blockAnimation();
         btn->show();
         btn->setImageVisible(false);
         QPropertyAnimation * ani = new QPropertyAnimation(btn, "geometry", this);
@@ -159,20 +177,42 @@ void GroupExButtons::preview(int scale/*5*/, int duration/*200*/)
         ani->setEasingCurve(QEasingCurve::OutExpo);
         ani->setEndValue(QRectF(cos(angleUnit*i+koef)*scale+left,
                                 sin(angleUnit*i+koef)*scale+top, Radius, Radius));
-        connect(ani, SIGNAL(finished()), btn, SLOT(Unlocked()));
+        connect(ani, SIGNAL(finished()), btn, SLOT(unBlockAnimation()));
         ani->start(QAbstractAnimation::DeleteWhenStopped);
     }
     emit prewiewFinished();
 }
 
-ExButton *GroupExButtons::getSubButton(const QString &button){
+ExButton *GroupExButtons::getSubButton(const QString &caption){
     int count = subButtons.count();
     for(int i =0;i<count;++i){
-       if(subButtons.at(i)->getCaption()==button){
-              return subButtons.at(i);
-       }
+        if(subButtons.at(i)->getCaption()==caption){
+            return subButtons.at(i);
+        }
     }
     return NULL;
+}
+
+ExButton *GroupExButtons::takeAt(int pos){
+    return subButtons.takeAt(pos);
+}
+
+ExButton *GroupExButtons::takeAt(const QString &caption){
+    int count = subButtons.count();
+    for(int i =0;i<count;++i){
+        if(subButtons.at(i)->getCaption()==caption){
+
+            return subButtons.takeAt(i);
+        }
+    }
+    return NULL;
+}
+
+bool GroupExButtons::isDefaultButton(ExButton *button){
+    if (button->getCaption()==defaultButton->getCaption())
+        return true;
+    else
+        return false;
 }
 
 void GroupExButtons::startAnimation(){
@@ -180,22 +220,26 @@ void GroupExButtons::startAnimation(){
 
     radOffset = defaultButton->getRadius()/2-defaultButton->getSmallRadius()/2;
 
-    if (defaultButton->isMaximum()){
+    if (defaultButton->isMaximumSize()){
+        defaultButton->minimizeAnimated();
         showAnimated(1, 500);
     }
     else{
+
+        defaultButton->maximizeAnimated();
         hideAnimated(-radOffset, 300);
     }
 }
 
 void GroupExButtons::onMouseEnter(){
-    if (defaultButton->isMaximum()&&!defaultButton->IsLocked()){
+    if (defaultButton->isMaximumSize()&&!defaultButton->IsAnimationBlocked()){
         preview(5, 200);
     }
 }
 
 void GroupExButtons::onMouseLeave(){
-    if (defaultButton->isMaximum()&&!defaultButton->IsLocked())
+    if (defaultButton->isMaximumSize()&&!defaultButton->IsAnimationBlocked())
         hideAnimated(0, 300);
 
 }
+

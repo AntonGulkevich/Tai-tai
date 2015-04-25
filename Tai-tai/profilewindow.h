@@ -12,6 +12,7 @@
 #include "exlabel.h"
 #include "exbutton.h"
 #include "groupexbuttons.h"
+#include "profilesetupwindow.h"
 
 class ProfileWindow : public QFrame
 {
@@ -30,21 +31,39 @@ public slots:
     void drawButton();
     void animatedHide();
 
+    void loginExButtonLeftClicked();
+    void createExButtonLeftClicked();
+    void deleteExButtonLeftClicked();
+    void editExButtonLeftClicked();
+    void exitExButtonLeftClicked();
+    void helpExButtonLeftClicked();
+
+
 private:
     QPropertyAnimation * animation;
     QBoxLayout * bigLay;
     QBoxLayout * topLay;
     QBoxLayout * botLay;
+    QBoxLayout * profileLay;
+    QBoxLayout * profileHorLay;
 
     GroupExButtons* groupEx;
 
-    ExButton *testExButton;
+    ExButton *loginExButton;
     ExButton *createExButton;
     ExButton *deleteExButton;
     ExButton *editExButton;
     ExButton *exitExButton;
     ExButton *helpExButton;
 
+    ExButton *nextProfileButtton;
+    ExButton *previousProfileButton;
+
+    QWidget *profileFrame;
+    ExLabel *profileNameLabel;
+    ExLabel *profileAvaLabel;
+    QLineEdit * profilePasswordEdit;
+    ProfileSetupWindow * profileSetWin;
 };
 
 #endif // PROFILEWINDOW_H

@@ -25,15 +25,15 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
     TSTSTSTTS->move(500, 500);
     TSTSTSTTS->show();
     TSTSTSTTS->setEnabled(true);
-    connect(TSTSTSTTS, SIGNAL(clicked()), this, SLOT(showOverLay()));
+
+    connect(TSTSTSTTS, SIGNAL(clicked()), this, SLOT(hideProfileWindow()));
 
     QPushButton * btn= new QPushButton("test", this);
     btn->resize(100, 100);
     btn->move(500, 100);
     btn->show();
 
-    connect(btn, SIGNAL(pressed()), this, SLOT(btnPressed()));
-    connect(btn, SIGNAL(released()), this, SLOT(btnReleased()));
+    connect(btn, SIGNAL(clicked()), this, SLOT(showProfileWindow()));
 
     overLay = new QWidget(this);
     overLay->setWindowFlags(Qt::FramelessWindowHint);
@@ -42,32 +42,24 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
     overLay->hide();
 
     MainProfileWindow = new ProfileWindow(this);
-    connect (MainProfileWindow, SIGNAL(hide_()), this, SLOT(hideOverLay()));
 }
 
 MainWindow::~MainWindow()
 {
 
 }
-void MainWindow::btnPressed(){
-
-}
-void MainWindow::btnReleased(){
-    if (MainProfileWindow->isHidden()){
-        overLay->show();
-        MainProfileWindow->StartShowAnim(0, 0, mainWindowStartSize.width()/2, mainWindowStartSize.height());
-
-    }
-    else{
-        overLay->hide();
-        MainProfileWindow->StartHideAnim(0, 0, mainWindowStartSize.width()/2, mainWindowStartSize.height());
-    }
-}
-
 void MainWindow::setWhiteBackground(){
     QPalette ActPal;
     ActPal.setColor(backgroundRole(), Qt::white);
     setPalette(ActPal);
+}
+
+void MainWindow::showProfileWindow(){
+     MainProfileWindow->StartShowAnim(0, 0, mainWindowStartSize.width()/2, mainWindowStartSize.height());
+}
+
+void MainWindow::hideProfileWindow(){
+    MainProfileWindow->StartHideAnim(0, 0, mainWindowStartSize.width()/2, mainWindowStartSize.height());
 }
 
 void MainWindow::showOverLay(){

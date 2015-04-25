@@ -16,13 +16,17 @@ SOURCES += main.cpp\
     profilewindow.cpp \
     exlabel.cpp \
     exbutton.cpp \
-    groupexbuttons.cpp
+    groupexbuttons.cpp \
+    profile.cpp \
+    profilesetupwindow.cpp
 
 HEADERS  += mainwindow.h \
     profilewindow.h \
     exlabel.h \
     exbutton.h \
-    groupexbuttons.h
+    groupexbuttons.h \
+    profile.h \
+    profilesetupwindow.h
 
 RESOURCES += \
     icons.qrc

@@ -3,34 +3,15 @@
 ExButton::ExButton(QWidget *parent, const QString &caption, int r, bool subButton) :
     QFrame(parent), Caption(caption)
 {
-    isMaxed=true;
-    Radius=r;
-    SmallRadius=r/2;
+    Maxed = true;
+    AnimationLocked = false;
+    Radius = r;
+    SmallRadius = r/2;
+    countLiteralsShortCaption=1;
+
     resize(Radius, Radius);
-    QString backDef, backHover, backPressed;
-    /*vertical gradient windows button style*/
-    /*
-    backDef = "background: qlineargradient(x1:0.5, y1:0, x2:0.5, y2:4,stop:0 white, stop: 1 gray);";
-    backHover = "background: qlineargradient(x1:0.5, y1:0, x2:0.5, y2:2,stop:0 white, stop: 1 gray);";
-    backPressed = "background: qlineargradient(x1:0.5, y1:0, x2:0.5, y2:1.3,stop:0 white, stop: 1 gray);";
-    */
-    backDef ="background-color:white; ";
-    backHover ="background-color:white; ";
-    backPressed ="background-color:white; ";
 
-    defaultSSBig="QWidget{border: 0px solid gray; border-radius: "
-            +QString::number(Radius/2)+"px;" + backDef +"}";
-    pressedSSBig ="QWidget{border: 1px solid; border-radius: "
-            +QString::number(Radius/2)+"px;"+backPressed+"border-color: #6196c8}";
-    defaultSSSmall="QWidget{border: 0px solid gray; border-radius: "
-            +QString::number(SmallRadius/2)+"px;" + backDef +"}";
-    pressedSSSmall ="QWidget{border: 1px solid; border-radius: "
-            +QString::number(SmallRadius/2)+"px;"+backPressed+"border-color: #6196c8}";
-
-    hoverSS="QWidget{"+backHover+"border-color: #6196c8}";
-
-
-    this->setStyleSheet(defaultSSBig);
+    initSS();
 
     mainLay = new QBoxLayout(QBoxLayout::TopToBottom, this);
     mainLay->setMargin(0);
@@ -42,6 +23,7 @@ ExButton::ExButton(QWidget *parent, const QString &caption, int r, bool subButto
 
     mainLay->addWidget(captionExLabel, 0, Qt::AlignCenter);
     mainLay->addWidget(imageLabel, 0, Qt::AlignCenter);
+
     captionExLabel->setStyleSheet("QLabel{border-width: 0px; color: black;}");
     captionExLabel->setAttribute(Qt::WA_TranslucentBackground);
     captionExLabel->setText(Caption);
@@ -54,13 +36,57 @@ ExButton::ExButton(QWidget *parent, const QString &caption, int r, bool subButto
     setMaximumSize(Radius,Radius);
     setMinimumSize(SmallRadius, SmallRadius);
 
-    isLocked=false;
-
     if (subButton){
         lower();
         hide();
     }
     rotation=0;
+}
+void ExButton::initSS(){
+    /*vertical gradient windows button style*/
+    /*
+    backDef = "background: qlineargradient(x1:0.5, y1:0, x2:0.5, y2:4,stop:0 white, stop: 1 gray);";
+    backHover = "background: qlineargradient(x1:0.5, y1:0, x2:0.5, y2:2,stop:0 white, stop: 1 gray);";
+    backPressed = "background: qlineargradient(x1:0.5, y1:0, x2:0.5, y2:1.3,stop:0 white, stop: 1 gray);";
+    */
+
+    setDefaultBackgroundColor("white");
+    setHoverBackgroundColor("white");
+    setPressedBackgroundColor("white");
+
+    this->setStyleSheet(defaultSSBig);
+}
+
+void ExButton::setCountLiteralsShortCaption(int count){
+    countLiteralsShortCaption= count;
+}
+
+int ExButton::getCountLiteralsShortCaption(){
+    return countLiteralsShortCaption;;
+}
+
+void ExButton::swapButtonsGeometry(ExButton *target){
+   QRect tempRect;
+   tempRect=geometry();
+   setGeometry(target->geometry());
+   target->setGeometry(tempRect);
+
+   bool tempSt;
+   tempSt=Maxed;
+   Maxed=target->Maxed;
+   target->Maxed=tempSt;
+
+   QString tempSS;
+   tempSS=styleSheet();
+   setStyleSheet(target->styleSheet());
+   target->setStyleSheet(tempSS);
+}
+
+void ExButton::setDefaultSS(){
+    if (Maxed)
+        setStyleSheet(defaultSSBig);
+    else
+        setStyleSheet(defaultSSSmall);
 }
 
 ExButton::~ExButton(){
@@ -80,8 +106,8 @@ void ExButton::setFullCaption(){
     captionExLabel->setText(Caption);
 }
 
-void ExButton::setShortCaption(){
-    captionExLabel->setText(Caption.at(0));
+void ExButton::setShortCaption(int count){
+    captionExLabel->setText(Caption.left(count));
 }
 
 void ExButton::setImage(const QString &image){
@@ -96,8 +122,7 @@ void ExButton::setRadius(int radius){
 void ExButton::setSmallRadius(int radius){
     SmallRadius=radius;
 }
-void ExButton::setRotation(int degree)
-{
+void ExButton::setRotation(int degree){
     rotation=degree;
 }
 
@@ -105,51 +130,68 @@ void ExButton::setImageMargin(int margin){
     imageLabel->setMargin(margin);
 }
 
-QString ExButton::getCaption()
-{
+QString ExButton::getCaption(){
     return Caption;
 }
 
-int ExButton::getRadius()
-{
+int ExButton::getRadius(){
     return Radius;
 }
 
-int ExButton::getSmallRadius()
-{
+int ExButton::getSmallRadius(){
     return SmallRadius;
 }
 
-void ExButton::setImageVisible(bool state)
-{
+void ExButton::setImageVisible(bool state){
     imageLabel->setVisible(state);
 }
 
-void ExButton::setCaptionVisible(bool state)
-{
+void ExButton::setCaptionVisible(bool state){
     captionExLabel->setVisible(state);
 }
 
-int ExButton::getRotation()
-{
+int ExButton::getRotation(){
     return rotation;
 }
 
-void ExButton::setIsMaxed(bool state)
-{
-    isMaxed = state;
+bool ExButton::isMaximumSize(){
+    return Maxed;
 }
 
-bool ExButton::isMaximum(){
-    return isMaxed;
+bool ExButton::IsAnimationBlocked(){
+    return AnimationLocked;
 }
 
-bool ExButton::IsLocked(){
-    return isLocked;
+void ExButton::setDefaultBackgroundColor(const QString &color){
+    defaultBackGroudColor = "background-color:" +color+";";
+
+    defaultSSBig="QWidget{border:  solid gray; border-width:1px ;border-radius: "
+            +QString::number(Radius/2)+"px;" + defaultBackGroudColor +"}";
+    defaultSSSmall="QWidget{border:  solid gray; border-width:1px ; border-radius: "
+            +QString::number(SmallRadius/2)+"px;" + defaultBackGroudColor +"}";
 }
 
-void ExButton::OnClick(){
-    if (isLocked){
+void ExButton::setHoverBackgroundColor(const QString &color){
+    hoverBackGroudColor = "background-color:" +color+";";
+
+    hoverSS="QWidget{"+hoverBackGroudColor+"border-color: #6196c8; border-width:1px}";
+}
+
+void ExButton::setPressedBackgroundColor(const QString &color){
+    pressedBackGroudColor = "background-color:" +color+";";
+
+    pressedSSBig ="QWidget{border: solid; border-width:2px ; border-radius: "
+            +QString::number(Radius/2)+"px;"+pressedBackGroudColor+"border-color: #6196c8}";
+    pressedSSSmall ="QWidget{border: solid; border-width:2px ; border-radius: "
+            +QString::number(SmallRadius/2)+"px;"+pressedBackGroudColor+"border-color: #6196c8}";
+}
+
+void ExButton::unBlockAnimation(){
+    AnimationLocked=false;
+}
+
+void ExButton::minimizeAnimated(){
+    if (IsAnimationBlocked()){
         qDebug()<<"locked";
         return;
     }
@@ -158,8 +200,8 @@ void ExButton::OnClick(){
     int radOffset;
 
     radOffset = Radius/2-SmallRadius/2;
-    isMaxed=!isMaxed;
-    Locked();
+    Maxed=false;
+    blockAnimation();
     QPropertyAnimation *animation;
     animation = new QPropertyAnimation(this, "geometry");
     animation->setDuration(300);
@@ -168,41 +210,57 @@ void ExButton::OnClick(){
     top=this->geometry().top();
     left=this->geometry().left();
 
-    if(!isMaxed){
-        animation->setStartValue(QRect(left,top,Radius, Radius ));
-        animation->setEndValue(QRect(left+radOffset, top+radOffset, SmallRadius, SmallRadius));
-        setShortCaption();
-    }
-    else{
-        animation->setStartValue(QRect(left,top,SmallRadius, SmallRadius ));
-        animation->setEndValue(QRect(left-radOffset, top-radOffset, Radius, Radius));
-        setFullCaption();
-    }
+    animation->setStartValue(QRect(left,top,Radius, Radius ));
+    animation->setEndValue(QRect(left+radOffset, top+radOffset, SmallRadius, SmallRadius));
+    setShortCaption(countLiteralsShortCaption);
+
     animation->start(QAbstractAnimation::DeleteWhenStopped);
-    connect(animation, SIGNAL(finished()), this, SLOT(Unlocked()));
+    connect(animation, SIGNAL(finished()), this, SLOT(unBlockAnimation()));
 
-    if (isMaxed){
-        setStyleSheet(defaultSSBig+hoverSS+"QWidget{border-width:1px;}");
+    setStyleSheet(defaultSSSmall+hoverSS);
+}
+
+void ExButton::maximizeAnimated(){
+    if (IsAnimationBlocked()){
+        qDebug()<<"locked";
+        return;
     }
-    else{
-        setStyleSheet(defaultSSSmall+hoverSS+"QWidget{border-width:1px;}");
-    }
+    int top;
+    int left;
+    int radOffset;
+
+    radOffset = Radius/2-SmallRadius/2;
+    Maxed=true;
+    blockAnimation();
+    QPropertyAnimation *animation;
+    animation = new QPropertyAnimation(this, "geometry");
+    animation->setDuration(300);
+    animation->setEasingCurve(QEasingCurve::InCubic);
+
+    top=this->geometry().top();
+    left=this->geometry().left();
+
+    animation->setStartValue(QRect(left,top,SmallRadius, SmallRadius ));
+    animation->setEndValue(QRect(left-radOffset, top-radOffset, Radius, Radius));
+    setFullCaption();
+
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+    connect(animation, SIGNAL(finished()), this, SLOT(unBlockAnimation()));
+
+    connect(animation, SIGNAL(finished()), captionExLabel,  SLOT(hide()));
+    connect(animation, SIGNAL(finished()), imageLabel,      SLOT(show()));
+
+    setStyleSheet(defaultSSBig);
+
+
 }
 
-void ExButton::Locked(){
-    isLocked=true;
+void ExButton::blockAnimation(){
+    AnimationLocked=true;
 }
 
-void ExButton::Unlocked(){
-    isLocked=false;
-}
-
-void ExButton::Redraw(QVariant var)
-{
-    //setStyleSheet("border-radius: " +QString::number(this->geometry().height()/2)+"px;");
-}
 void ExButton::mousePressEvent(QMouseEvent* pe ){
-    if (isMaxed){
+    if (isMaximumSize()){
         setStyleSheet(pressedSSBig);
     }
     else{
@@ -210,21 +268,26 @@ void ExButton::mousePressEvent(QMouseEvent* pe ){
     }
 }
 void ExButton::mouseReleaseEvent(QMouseEvent* pe){
-    if (!isLocked&&(pe->button()==Qt::RightButton)){
+    if (!IsAnimationBlocked()&&(pe->button()==Qt::RightButton)){
         emit rightClicked();
     }
-    if (!isLocked&&(pe->button()==Qt::LeftButton)){
+    if (!IsAnimationBlocked()&&(pe->button()==Qt::LeftButton)){
         emit leftClicked();
     }
-    OnClick();
+    if (isMaximumSize()){
+        setStyleSheet(defaultSSBig+hoverSS);
+    }
+    else{
+        setStyleSheet(defaultSSSmall+hoverSS);
+    }
 }
 void ExButton::enterEvent(QEvent *event){
     emit mouseEntered();
     int r, left, top;
     left = imageLabel->geometry().left();
     top = imageLabel->geometry().top();
-    if (isMaxed){
-        setStyleSheet(defaultSSBig+hoverSS+"QWidget{border-width:1px;}");
+    if (isMaximumSize()){
+        setStyleSheet(defaultSSBig+hoverSS);
         r=Radius;
         QPropertyAnimation *animation = new QPropertyAnimation(imageLabel, "geometry");
         animation->setEasingCurve(QEasingCurve::InOutQuad);
@@ -236,7 +299,7 @@ void ExButton::enterEvent(QEvent *event){
         connect(animation, SIGNAL(finished()), imageLabel,      SLOT(hide()));
     }
     else{
-        setStyleSheet(defaultSSSmall+hoverSS+"QWidget{border-width:1px;}");
+        setStyleSheet(defaultSSSmall+hoverSS);
         r=SmallRadius;
 
     }
@@ -244,11 +307,12 @@ void ExButton::enterEvent(QEvent *event){
 void ExButton::leaveEvent(QEvent *event){
     emit mouseLeaved();
     int r;
-    if (isMaxed){
+    if (isMaximumSize()){
         setStyleSheet(defaultSSBig);
         r=Radius;
         captionExLabel->setVisible(false);
         imageLabel->setVisible(true);
+
         QPropertyAnimation *animation = new QPropertyAnimation(imageLabel, "geometry");
         animation->setEasingCurve(QEasingCurve::InOutQuad);
         animation->setDuration(200);
@@ -265,16 +329,9 @@ void ExButton::leaveEvent(QEvent *event){
 void ExButton::resizeEvent(QResizeEvent *event){
 
     /*background: qlineargradient(x1:0.5, y1:0, x2:0.5, y2:4,stop:0 white, stop: 1 gray)*/
+    /*
     setStyleSheet("border:1px solid gray; border-radius: " +QString::number(this->geometry().height()/2)+"px;\
                   background-color:white");
-
-}
-
-void ExButton::moveEvent(QMoveEvent *event){
-    /*
-    int ofs;
-    ofs=geometry().width();
-    imageLabel->move(event->pos().x()+ofs, event->pos().y()+ofs/2-imageLabel->height()/2);
     */
 }
 
