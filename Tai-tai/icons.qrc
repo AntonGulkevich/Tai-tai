@@ -65,6 +65,10 @@
         <file>../resourses/icons/logout_acc2.png</file>
         <file>../resourses/icons/logout_acc3.png</file>
         <file>../resourses/icons/login_acc.png</file>
+        <file>../resourses/icons/cancel_nb.png</file>
+        <file>../resourses/icons/check_nb.png</file>
+        <file>../resourses/icons/email_gears_nb.png</file>
+        <file>../resourses/icons/more_nb.png</file>
     </qresource>
     <qresource prefix="/../resourses/icons"/>
     <qresource prefix="/resourses/icons"/>

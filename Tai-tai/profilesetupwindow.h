@@ -35,6 +35,7 @@ private:
     ExButton *cancel;
     ExButton *saveAndContinue;
     ExButton *extendedSetup;
+    ExButton *addEmail;
 
     GroupExButtons *controllGroup;
 

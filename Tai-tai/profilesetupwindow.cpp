@@ -28,6 +28,10 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     windowCaption = new QLabel("Create new profile.");
     windowCaption->setStyleSheet("font: 20px");
 
+    QFrame *h_line = new QFrame();
+    h_line->setFrameStyle(QFrame::HLine| QFrame::Raised);
+    h_line->setStyleSheet("border: 0px; border-top: 1px solid gray");
+
     QLabel * profileCaptionLabel = new QLabel("Input name of the new profile:");
     profileNameLE = new QLineEdit();
 
@@ -45,8 +49,10 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
 
 
     topLay->addWidget(windowCaption, 0, Qt::AlignHCenter);
+    topLay->addWidget(h_line, 1);
+    topLay->addSpacing(5);
     topLay->addWidget(profileAvaLabel, 1, Qt::AlignHCenter);
-    topLay->addSpacing(20);
+    topLay->addSpacing(5);
 
     gridLay->addWidget(profileCaptionLabel,0, 0, Qt::AlignLeft);
     gridLay->addWidget(profileNameLE,0, 1, Qt::AlignLeft);
@@ -61,31 +67,39 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
 
     /*exbuttons*/
 
-    int margin =5;
+    int margin =10;
     int radius=50;
 
     cancel = new ExButton(this,  "Cancel", radius, 0);
-    cancel->move(800/4-100+50/2, 600/2+50/2+100);
-    cancel->setRotation(201);
-    cancel->setImage(":/resourses/icons/logout_acc3.png");
+    cancel->move(800/4-100+50/2, 600/2+50/2+150);
+    cancel->setRotation(275);
+    cancel->setImage(":/resourses/icons/cancel_nb.png");
     cancel->setImageMargin(margin);
     cancel->setToolTip("Login in current account.");
 
     saveAndContinue = new ExButton(this,  "Save", radius, 1);
-    saveAndContinue->setImage(":/resourses/icons/create_acc.png");
+    saveAndContinue->setImage(":/resourses/icons/check_nb.png");
     saveAndContinue->setImageMargin(margin);
     saveAndContinue->setToolTip("Save new profile.");
 
     extendedSetup = new ExButton(this,  "Continue", radius, 1);
-    extendedSetup->setImage(":/resourses/icons/create_acc.png");
+    extendedSetup->setImage(":/resourses/icons/more_nb.png");
     extendedSetup->setImageMargin(margin);
     extendedSetup->setToolTip("Save profile and continue setup.");
+
+    addEmail = new ExButton(this, "Emails", radius, 1);
+    addEmail->setImage(":/resourses/icons/email_gears_nb.png");
+    addEmail->setImageMargin(margin);
+    addEmail->setToolTip("Manage email in this profile.");
 
     controllGroup= new GroupExButtons();
 
     controllGroup->addButton(cancel);
     controllGroup->addButton(saveAndContinue);
     controllGroup->addButton(extendedSetup);
+    controllGroup->addButton(addEmail);
+
+    controllGroup->setDefaultButton("Save");
 
     /***********/
 }
