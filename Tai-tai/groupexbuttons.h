@@ -30,6 +30,7 @@ signals:
     void prewiewFinished();
 
 public slots:
+    void closeGroup();
     void startAnimation();
     void onMouseEnter();
     void onMouseLeave();

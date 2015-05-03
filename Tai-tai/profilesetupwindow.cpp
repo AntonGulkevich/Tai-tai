@@ -32,7 +32,7 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     h_line->setFrameStyle(QFrame::HLine| QFrame::Raised);
     h_line->setStyleSheet("border: 0px; border-top: 1px solid gray");
 
-    QLabel * profileCaptionLabel = new QLabel("Input name of the new profile:");
+    QLabel * profileCaptionLabel = new QLabel("Name of the new profile:");
     profileNameLE = new QLineEdit();
 
     profileAvaLabel = new ExLabel("AVA");
@@ -41,7 +41,7 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     profileAvaLabel->setPixmap(avadef);
     profileAvaLabel->setStyleSheet("QLabel{border: 1px solid gray;}");
 
-    QLabel *profilePasswordLabel = new QLabel("Input new password:");
+    QLabel *profilePasswordLabel = new QLabel("New password:");
     profilePasswordFirstLE =  new QLineEdit();
 
     QLabel *profilePasswordVerificationLabel = new QLabel ("Repeat password:");
@@ -72,7 +72,7 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
 
     cancel = new ExButton(this,  "Cancel", radius, 0);
     cancel->move(800/4-100+50/2, 600/2+50/2+150);
-    cancel->setRotation(275);
+    cancel->setRotation(273);
     cancel->setImage(":/resourses/icons/cancel_nb.png");
     cancel->setImageMargin(margin);
     cancel->setToolTip("Login in current account.");
@@ -102,6 +102,13 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     controllGroup->setDefaultButton("Save");
 
     /***********/
+
+    /*connections*/
+    connect(cancel, SIGNAL(leftClicked()), this , SLOT(onCancelExButtonclicked()));
+    connect(saveAndContinue, SIGNAL(leftClicked()), this, SLOT(onSaveAndContinueExButtonClicked()));
+    connect(extendedSetup, SIGNAL(leftClicked()), this, SLOT(onExtendedSetupExButtonClicked()));
+    connect(addEmail, SIGNAL(leftClicked()), this, SLOT(onAddEmailExButtonClicked()));
+    /*************/
 }
 
 void ProfileSetupWindow::StartShowAnim(int left, int top, int width, int height){
@@ -110,7 +117,6 @@ void ProfileSetupWindow::StartShowAnim(int left, int top, int width, int height)
     animation->setDuration(300);
     animation->setStartValue(QRect(left, top, 0, height));
     animation->setEndValue(QRect(left, top, width, height));
-
     animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
@@ -120,7 +126,38 @@ void ProfileSetupWindow::StartHideAnim(int left, int top, int width, int height)
     animation->setDuration(300);
     animation->setStartValue(QRect(left, top, width, height));
     animation->setEndValue(QRect(left, top, 1, height));
-
     animation->start(QAbstractAnimation::DeleteWhenStopped);
     connect (animation, SIGNAL(finished()), this, SLOT(hide()));
+    controllGroup->closeGroup();
+}
+bool ProfileSetupWindow::isCorrectLineEdit(QLineEdit *lineEdit){
+    if (lineEdit->text().isEmpty()){
+        lineEdit->setStyleSheet("QLineEdit { border: 1px solid red}");
+        return false;
+    }
+    else{
+        lineEdit->setStyleSheet("");
+        return true;
+    }
+}
+
+void ProfileSetupWindow::onCancelExButtonclicked(){
+    animatedHide();
+
+}
+void ProfileSetupWindow::animatedHide(){
+    StartHideAnim(0, 0, width(), height());
+    emit hide_();
+}
+
+void ProfileSetupWindow::onSaveAndContinueExButtonClicked(){
+
+}
+
+void ProfileSetupWindow::onExtendedSetupExButtonClicked(){
+
+}
+
+void ProfileSetupWindow::onAddEmailExButtonClicked(){
+
 }

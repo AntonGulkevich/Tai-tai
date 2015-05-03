@@ -215,6 +215,11 @@ bool GroupExButtons::isDefaultButton(ExButton *button){
         return false;
 }
 
+void GroupExButtons::closeGroup(){
+    if (!defaultButton->isMaximumSize())
+        defaultButton->rightClicked();
+}
+
 void GroupExButtons::startAnimation(){
     int radOffset;
 

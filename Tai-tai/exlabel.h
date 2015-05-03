@@ -30,6 +30,8 @@ public:
     void setActiveFontSize(int size);
     void setSelectedFontSize(int size);
     void setUnselectedFontSize(int size);
+
+    void setFonts(int act , int sel, int uns);
 signals:
     void clicked();
 

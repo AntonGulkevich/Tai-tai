@@ -34,10 +34,22 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     profileFrame->setLayout(profileLay);
 
     profileNameLabel = new ExLabel("DEFAULT PROFILE");
+
+    QFont fnt2;
+    fnt2.setPixelSize(15);
+    fnt2.setItalic(false);
+    fnt2.setUnderline(false);
+    fnt2.setBold(false);
+
+    profileNameLabel->setFont(fnt2);
+    profileNameLabel->setFonts(15, 16, 15);
+
     profileAvaLabel = new ExLabel("AVA");
 
-    profilePasswordEdit = new QLineEdit("*******");
+    profilePasswordEdit = new QLineEdit();
     profilePasswordEdit->setStyleSheet("border: 0 px");
+    profilePasswordEdit->setEchoMode(QLineEdit::Password);
+    profilePasswordEdit->setPlaceholderText("Password");
 
     profileAvaLabel->setStyleSheet("QLabel{border: 1px solid gray;}");
 
@@ -49,7 +61,9 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     profileAvaLabel->setPixmap(avadef);
     // profileAvaLabel->setMask(avadef.mask());
 
+    profileLay->addSpacing(2);
     profileLay->addWidget(profileNameLabel, 0, Qt::AlignHCenter);
+    profileLay->addSpacing(2);
     profileLay->addWidget(profileAvaLabel, 1, Qt::AlignHCenter);
     profileLay->addWidget(profilePasswordEdit, 0, Qt::AlignHCenter);
     profileFrame->setMaximumSize(profileNameLabel->width()+2,
@@ -154,6 +168,7 @@ void ProfileWindow::StartShowAnim(int left, int top, int width, int height){
     animation->setEndValue(QRect(left, top, width-100, height));
 
     animation->start(QAbstractAnimation::DeleteWhenStopped);
+    emit show_();
 }
 
 void ProfileWindow::drawButton(){
@@ -218,5 +233,7 @@ void ProfileWindow::StartHideAnim(int left, int top, int width, int height){
 
     animation->start(QAbstractAnimation::DeleteWhenStopped);
     connect (animation, SIGNAL(finished()), this, SLOT(hide()));
+    groupEx->closeGroup();
+    emit hide_();
 }
 

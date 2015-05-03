@@ -122,6 +122,12 @@ void ExLabel::setUnselectedFontSize(int size){
     unselectedFont->setPixelSize(size);
 }
 
+void ExLabel::setFonts(int act, int sel, int uns){
+    activeFont->setPixelSize(act);
+    selectedFont->setPixelSize(sel);
+    unselectedFont->setPixelSize(uns);
+}
+
 
 
 
