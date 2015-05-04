@@ -282,7 +282,7 @@ void ExButton::mouseReleaseEvent(QMouseEvent* pe){
     }
 }
 void ExButton::enterEvent(QEvent *event){
-    emit mouseEntered();
+
     int r, left, top;
     left = imageLabel->geometry().left();
     top = imageLabel->geometry().top();
@@ -303,9 +303,9 @@ void ExButton::enterEvent(QEvent *event){
         r=SmallRadius;
 
     }
+    emit mouseEntered();
 }
-void ExButton::leaveEvent(QEvent *event){
-    emit mouseLeaved();
+void ExButton::leaveEvent(QEvent *event){    
     int r;
     if (isMaximumSize()){
         setStyleSheet(defaultSSBig);
@@ -325,6 +325,7 @@ void ExButton::leaveEvent(QEvent *event){
         r=SmallRadius;
 
     }
+    emit mouseLeaved();
 }
 void ExButton::resizeEvent(QResizeEvent *event){
 

@@ -14,19 +14,32 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     mainLay->setMargin(0);
 
     topLay = new QBoxLayout(QBoxLayout::TopToBottom);
-    topLay->setSpacing(5);
-    topLay->setMargin(10);
+    topLay->setSpacing(0);
+    topLay->setMargin(0);
 
     botLayl = new QBoxLayout(QBoxLayout::TopToBottom);
 
     gridLay = new QGridLayout();
+    gridLay->setSpacing(5);
+    gridLay->setMargin(10);
 
     mainLay->addLayout(topLay);
     mainLay->addLayout(botLayl);
     setStyleSheet("QLabel { border: 0 px}");
-    /**********/
+    /**********/    
+    QWidget *labelCaptionBack = new QWidget();
+    labelCaptionBack->setStyleSheet("background-color:rgba(250, 250, 250); border: 0px");
+    QBoxLayout *labelcaptionLay = new QBoxLayout(QBoxLayout::TopToBottom);
+    labelCaptionBack->setMaximumHeight(31);
+    labelCaptionBack->setMinimumHeight(31);
+    labelcaptionLay->setSpacing(0);
+    labelcaptionLay->setMargin(0);
+
     windowCaption = new QLabel("Create new profile.");
-    windowCaption->setStyleSheet("font: 20px");
+    windowCaption->setStyleSheet("font: 14px");
+
+    labelcaptionLay->addWidget(windowCaption, 0, Qt::AlignCenter);
+    labelCaptionBack->setLayout(labelcaptionLay);
 
     QFrame *h_line = new QFrame();
     h_line->setFrameStyle(QFrame::HLine| QFrame::Raised);
@@ -43,12 +56,13 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
 
     QLabel *profilePasswordLabel = new QLabel("New password:");
     profilePasswordFirstLE =  new QLineEdit();
+    profilePasswordFirstLE->setEchoMode(QLineEdit::Password);
 
     QLabel *profilePasswordVerificationLabel = new QLabel ("Repeat password:");
     profilePasswordSecondLE = new QLineEdit();
+    profilePasswordSecondLE->setEchoMode(QLineEdit::Password);
 
-
-    topLay->addWidget(windowCaption, 0, Qt::AlignHCenter);
+    topLay->addWidget(labelCaptionBack, 1);
     topLay->addWidget(h_line, 1);
     topLay->addSpacing(5);
     topLay->addWidget(profileAvaLabel, 1, Qt::AlignHCenter);
@@ -108,6 +122,7 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     connect(saveAndContinue, SIGNAL(leftClicked()), this, SLOT(onSaveAndContinueExButtonClicked()));
     connect(extendedSetup, SIGNAL(leftClicked()), this, SLOT(onExtendedSetupExButtonClicked()));
     connect(addEmail, SIGNAL(leftClicked()), this, SLOT(onAddEmailExButtonClicked()));
+    connect(this, SIGNAL(hide_()), this, SLOT(clearAllContent()));
     /*************/
 }
 
@@ -152,6 +167,7 @@ void ProfileSetupWindow::animatedHide(){
 
 void ProfileSetupWindow::onSaveAndContinueExButtonClicked(){
 
+
 }
 
 void ProfileSetupWindow::onExtendedSetupExButtonClicked(){
@@ -160,4 +176,12 @@ void ProfileSetupWindow::onExtendedSetupExButtonClicked(){
 
 void ProfileSetupWindow::onAddEmailExButtonClicked(){
 
+}
+
+void ProfileSetupWindow::clearAllContent(){
+    profileNameLE->clear();
+    profilePasswordFirstLE->clear();
+    profilePasswordSecondLE->clear();
+    QPixmap avadef(":/resourses/icons/ava_def.jpg");
+    profileAvaLabel->setPixmap(avadef);
 }

@@ -2,6 +2,7 @@
 
 GroupExButtons::GroupExButtons(){
     defaultButton=NULL;
+    scaleKoef=1;
 }
 
 GroupExButtons::~GroupExButtons(){
@@ -77,7 +78,7 @@ void GroupExButtons::showAnimated(int scale, int duration){
     left=defaultButton->geometry().left();
 
     buttonCount= subButtons.count();
-    scale = buttonCount*Radius/6.18*scale;
+    scale = buttonCount*Radius/6.18*scale*scaleKoef;
     angleUnit = 6.18/buttonCount;
     koef = 3.14*2/360*(defaultButton->getRotation())/5;
 
@@ -213,6 +214,48 @@ bool GroupExButtons::isDefaultButton(ExButton *button){
         return true;
     else
         return false;
+}
+
+void GroupExButtons::moveToPoints(int leftPoint, int rightPoint){
+    defaultButton->move(leftPoint, rightPoint);
+    int count = subButtons.count();
+    for(int i =0;i<count;++i){
+        subButtons[i]->move(leftPoint, rightPoint);
+    }
+
+}
+
+void GroupExButtons::hideGroup(){
+    closeGroup();
+    defaultButton->hide();
+}
+
+void GroupExButtons::showGroup(){
+    defaultButton->show();
+}
+
+void GroupExButtons::raiseToTop(){
+    int count = subButtons.count();
+    for(int i =0;i<count;++i){
+        subButtons[i]->raise();
+    }
+    defaultButton->raise();
+}
+
+int GroupExButtons::getBigRadius(){
+    return defaultButton->getRadius();
+}
+
+int GroupExButtons::getSmallRadius(){
+    return defaultButton->getSmallRadius();
+}
+
+double GroupExButtons::getScaleKoef(){
+    return scaleKoef;
+}
+
+void GroupExButtons::setScaleKoef(double scale_){
+    scaleKoef =scale_;
 }
 
 void GroupExButtons::closeGroup(){

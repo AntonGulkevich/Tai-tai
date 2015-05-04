@@ -36,7 +36,7 @@ public slots:
     void deleteExButtonLeftClicked();
     void editExButtonLeftClicked();
     void exitExButtonLeftClicked();
-    void helpExButtonLeftClicked();
+    void backExButtonLeftClicked();
 
 
 private:
@@ -54,7 +54,7 @@ private:
     ExButton *deleteExButton;
     ExButton *editExButton;
     ExButton *exitExButton;
-    ExButton *helpExButton;
+    ExButton *backExButton;
 
     ExButton *nextProfileButtton;
     ExButton *previousProfileButton;

@@ -21,9 +21,18 @@ public:
     ExButton *takeAt(int pos);
     ExButton *takeAt(const QString & caption);
     bool isDefaultButton(ExButton * button);
+    void moveToPoints(int leftPoint, int rightPoint);
+    void hideGroup();
+    void showGroup();
+    void raiseToTop();
+    int getBigRadius();
+    int getSmallRadius();
+    double getScaleKoef();
+    void setScaleKoef(double scale_);
 private:
     QList <ExButton*> subButtons;
     ExButton * defaultButton;
+    double scaleKoef;
 signals:
     void hideAnimatedFinished();
     void showAnimatedFinished();

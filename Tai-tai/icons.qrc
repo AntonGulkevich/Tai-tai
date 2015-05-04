@@ -69,6 +69,17 @@
         <file>../resourses/icons/check_nb.png</file>
         <file>../resourses/icons/email_gears_nb.png</file>
         <file>../resourses/icons/more_nb.png</file>
+        <file>../resourses/icons/minimize.png</file>
+        <file>../resourses/icons/maximize.png</file>
+        <file>../resourses/icons/minimize2.png</file>
+        <file>../resourses/icons/write_nb.png</file>
+        <file>../resourses/icons/restore.png</file>
+        <file>../resourses/icons/maximizeWindow.png</file>
+        <file>../resourses/icons/search_nb.png</file>
+        <file>../resourses/icons/deleteMail.png</file>
+        <file>../resourses/icons/openMail.png</file>
+        <file>../resourses/icons/contacts.png</file>
+        <file>../resourses/icons/save-file.png</file>
     </qresource>
     <qresource prefix="/../resourses/icons"/>
     <qresource prefix="/resourses/icons"/>

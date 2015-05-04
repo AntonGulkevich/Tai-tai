@@ -8,7 +8,6 @@ class profile
 {
 public:
     profile();
-
     void setLogin(const QString &login_);
     void setPasswordText(const QString &password);
     void setSaveWay(const QString &way);

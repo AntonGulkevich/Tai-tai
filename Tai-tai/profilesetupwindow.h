@@ -55,6 +55,7 @@ private slots:
     void onSaveAndContinueExButtonClicked();
     void onExtendedSetupExButtonClicked();
     void onAddEmailExButtonClicked();
+    void clearAllContent();
 
 };
 

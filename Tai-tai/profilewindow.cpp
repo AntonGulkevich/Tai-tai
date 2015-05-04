@@ -3,6 +3,7 @@
 ProfileWindow::ProfileWindow(QWidget *parent) :
     QFrame(parent)
 {
+
     resize(0, parent->height());
     move(0, 0);
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
@@ -23,7 +24,6 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
 
     /****************************/
 
-
     /*Profile layout*/
 
     profileFrame = new QWidget();
@@ -36,13 +36,13 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     profileNameLabel = new ExLabel("DEFAULT PROFILE");
 
     QFont fnt2;
-    fnt2.setPixelSize(15);
+    fnt2.setPixelSize(13);
     fnt2.setItalic(false);
     fnt2.setUnderline(false);
     fnt2.setBold(false);
 
     profileNameLabel->setFont(fnt2);
-    profileNameLabel->setFonts(15, 16, 15);
+    profileNameLabel->setFonts(14, 13, 13);
 
     profileAvaLabel = new ExLabel("AVA");
 
@@ -61,9 +61,15 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     profileAvaLabel->setPixmap(avadef);
     // profileAvaLabel->setMask(avadef.mask());
 
-    profileLay->addSpacing(2);
-    profileLay->addWidget(profileNameLabel, 0, Qt::AlignHCenter);
-    profileLay->addSpacing(2);
+
+    QWidget *labelNameBack = new QWidget();
+    labelNameBack->setStyleSheet("background-color:rgba(250, 250, 250); border: 0px");
+    QBoxLayout *topNameLay = new QBoxLayout(QBoxLayout::TopToBottom);
+    topNameLay->addSpacing(2);
+    topNameLay->addWidget(profileNameLabel, 0, Qt::AlignHCenter);
+    topNameLay->addSpacing(2);
+    labelNameBack->setLayout(topNameLay);
+    profileLay->addWidget(labelNameBack);
     profileLay->addWidget(profileAvaLabel, 1, Qt::AlignHCenter);
     profileLay->addWidget(profilePasswordEdit, 0, Qt::AlignHCenter);
     profileFrame->setMaximumSize(profileNameLabel->width()+2,
@@ -105,9 +111,9 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     exitExButton->setImage(":/resourses/icons/login_acc.png");
     exitExButton->setImageMargin(margin);
 
-    helpExButton = new ExButton(this,  "Info", radius, 1);
-    helpExButton->setImage(":/resourses/icons/info_acc.png");
-    helpExButton->setImageMargin(margin);
+    backExButton = new ExButton(this,  "Back", radius, 1);
+    backExButton->setImage(":/resourses/icons/cancel_nb.png");
+    backExButton->setImageMargin(10);
 
     groupEx = new GroupExButtons();
 
@@ -116,14 +122,14 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     groupEx->addButton(deleteExButton);
     groupEx->addButton(editExButton);
     groupEx->addButton(exitExButton);
-    groupEx->addButton(helpExButton);
+    groupEx->addButton(backExButton);
 
     connect(loginExButton, SIGNAL(leftClicked()), SLOT(loginExButtonLeftClicked()));
     connect(createExButton, SIGNAL(leftClicked()), SLOT(createExButtonLeftClicked()));
     connect(deleteExButton, SIGNAL(leftClicked()), SLOT(deleteExButtonLeftClicked()));
     connect(editExButton, SIGNAL(leftClicked()), SLOT(editExButtonLeftClicked()));
     connect(exitExButton, SIGNAL(leftClicked()), SLOT(exitExButtonLeftClicked()));
-    connect(helpExButton, SIGNAL(leftClicked()), SLOT(helpExButtonLeftClicked()));
+    connect(backExButton, SIGNAL(leftClicked()), SLOT(backExButtonLeftClicked()));
 
 
     /*next prev buttons*/
@@ -165,7 +171,7 @@ void ProfileWindow::StartShowAnim(int left, int top, int width, int height){
     animation = new QPropertyAnimation(this, "geometry");
     animation->setDuration(300);
     animation->setStartValue(QRect(left, top, 0, height));
-    animation->setEndValue(QRect(left, top, width-100, height));
+    animation->setEndValue(QRect(left, top, width, height));
 
     animation->start(QAbstractAnimation::DeleteWhenStopped);
     emit show_();
@@ -217,18 +223,19 @@ void ProfileWindow::exitExButtonLeftClicked(){
     }
 }
 
-void ProfileWindow::helpExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(helpExButton)){
-    //    groupEx->setDefaultButton("Info");
+void ProfileWindow::backExButtonLeftClicked(){
+    if (!groupEx->isDefaultButton(backExButton)){
+    //    groupEx->setDefaultButton("Back");
         groupEx->startAnimation();
     }
+    animatedHide();
 }
 
 void ProfileWindow::StartHideAnim(int left, int top, int width, int height){
 
     animation = new QPropertyAnimation(this, "geometry");
     animation->setDuration(300);
-    animation->setStartValue(QRect(left, top, width-100, height));
+    animation->setStartValue(QRect(left, top, width, height));
     animation->setEndValue(QRect(left, top, 1, height));
 
     animation->start(QAbstractAnimation::DeleteWhenStopped);
