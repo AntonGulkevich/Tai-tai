@@ -70,28 +70,21 @@ void MainWindow::initControllExButtons(){
     closeProgramm->setImageMargin(margin+1);
     closeProgramm->setToolTip("Close.");
     closeProgramm->setFixedSize(radius, radius);
-    closeProgramm->setDefaultBackgroundColor("rgb(240, 128, 128)");
-    closeProgramm->setHoverBackgroundColor("red");
-    closeProgramm->setPressedBackgroundColor("red");
-    closeProgramm->setDefaultSS();
+
 
     hideToTray = new ExButton(this,  "H", radius, 0);
     hideToTray->setImage(":/resourses/icons/minimize.png");
     hideToTray->setImageMargin(margin);
     hideToTray->setToolTip("Hide to tray.");
     hideToTray->setFixedSize(radius, radius);
-    hideToTray->setHoverBackgroundColor(additionBackGroundColor);
-    hideToTray->setPressedBackgroundColor(additionBackGroundColor);
-    hideToTray->setDefaultSS();
+
 
     expandToWindow = new ExButton(this,  "M", radius, 0);
     expandToWindow->setImage(":/resourses/icons/maximizeWindow.png");
     expandToWindow->setImageMargin(margin);
     expandToWindow->setToolTip("Maximize to window.");
     expandToWindow->setFixedSize(radius, radius);
-    expandToWindow->setHoverBackgroundColor(additionBackGroundColor);
-    expandToWindow->setPressedBackgroundColor(additionBackGroundColor);
-    expandToWindow->setDefaultSS();
+
 
     collapseToWindow = new ExButton(this,  "C", radius, 0);
     collapseToWindow->setImage(":/resourses/icons/minimize2.png");
@@ -99,9 +92,7 @@ void MainWindow::initControllExButtons(){
     collapseToWindow->setToolTip("Collapse to window.");
     collapseToWindow->setFixedSize(radius, radius);
     collapseToWindow->hide();
-    collapseToWindow->setHoverBackgroundColor(additionBackGroundColor);
-    collapseToWindow->setPressedBackgroundColor(additionBackGroundColor);
-    collapseToWindow->setDefaultSS();
+
 
     profileNameExLabel = new ExLabel("Default profile");
 
@@ -131,7 +122,7 @@ void MainWindow::initLayouts(){
 
     QFrame *h_line = new QFrame();
     h_line->setFrameStyle(QFrame::HLine| QFrame::Raised);
-    h_line->setStyleSheet("border: 0px; border-top: 1px solid gray");
+    h_line->setStyleSheet("border: 0px; border-top: 1px solid lightgray");
 
     mainLay->addLayout(topControllLay);
     mainLay->addWidget(h_line);
@@ -304,5 +295,21 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event){
         }
     }
     return QObject::eventFilter(obj,event);
+}
+void MainWindow::mousePressEvent(QMouseEvent *event){
+    if(event->button() == Qt::LeftButton)    {
+        mpos = event->pos();
+        canMove = true;
+    }
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event){
+    if (event->button() == Qt::LeftButton && canMove) {
+        canMove = false;
+    }
+}
+void MainWindow::mouseMoveEvent(QMouseEvent *event){
+    if((event->buttons() & Qt::LeftButton) && canMove)
+        move(event->globalPos()-mpos);
 }
 

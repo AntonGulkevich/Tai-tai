@@ -17,6 +17,8 @@ class MainWindow : public QFrame
 {
     Q_OBJECT
 private:
+    QPoint mpos;
+    bool canMove;
     ProfileWindow * MainProfileWindow;
     QSize mainWindowStartSize;
     QSize mainWindowMinSize;
@@ -80,6 +82,9 @@ private slots:
     void hideProfileWindow();
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 };
 
 #endif // MAINWINDOW_H

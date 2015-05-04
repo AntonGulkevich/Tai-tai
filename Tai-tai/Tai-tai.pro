@@ -18,7 +18,18 @@ SOURCES += main.cpp\
     exbutton.cpp \
     groupexbuttons.cpp \
     profile.cpp \
-    profilesetupwindow.cpp
+    profilesetupwindow.cpp \
+    account.cpp \
+    domain.cpp \
+    baseimap.cpp \
+    smtp.cpp \
+    message.cpp \
+    quotedprintable.cpp \
+    imap.cpp \
+    threadpop3.cpp \
+    threadimap.cpp \
+    basepop3.cpp \
+    pop3.cpp
 
 HEADERS  += mainwindow.h \
     profilewindow.h \
@@ -26,7 +37,18 @@ HEADERS  += mainwindow.h \
     exbutton.h \
     groupexbuttons.h \
     profile.h \
-    profilesetupwindow.h
+    profilesetupwindow.h \
+    account.h \
+    domain.h \
+    basepop3.h \
+    baseimap.h \
+    imap.h \
+    message.h \
+    pop3.h \
+    quotedprintable.h \
+    smtp.h \
+    threadimap.h \
+    threadpop3.h
 
 RESOURCES += \
     icons.qrc
