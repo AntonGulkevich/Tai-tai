@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     threadpop3.cpp \
     threadimap.cpp \
     basepop3.cpp \
-    pop3.cpp
+    pop3.cpp \
+    trackwidget.cpp
 
 HEADERS  += mainwindow.h \
     profilewindow.h \
@@ -48,7 +49,8 @@ HEADERS  += mainwindow.h \
     quotedprintable.h \
     smtp.h \
     threadimap.h \
-    threadpop3.h
+    threadpop3.h \
+    trackwidget.h
 
 RESOURCES += \
     icons.qrc

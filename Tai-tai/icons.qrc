@@ -80,6 +80,7 @@
         <file>../resourses/icons/openMail.png</file>
         <file>../resourses/icons/contacts.png</file>
         <file>../resourses/icons/save-file.png</file>
+        <file>../resourses/icons/back_nb.png</file>
     </qresource>
     <qresource prefix="/../resourses/icons"/>
     <qresource prefix="/resourses/icons"/>

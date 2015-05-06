@@ -7,10 +7,12 @@
 #include <QBoxLayout>
 #include <QPropertyAnimation>
 #include <QGridLayout>
+#include <QFileDialog>
 
 #include "exlabel.h"
 #include "exbutton.h"
 #include "groupexbuttons.h"
+#include "profile.h"
 
 class ProfileSetupWindow : public QFrame
 {
@@ -20,6 +22,7 @@ public:
     void StartHideAnim(int left, int top, int width, int height);
     void StartShowAnim(int left, int top, int width, int height);
     bool isCorrectLineEdit(QLineEdit *lineEdit);
+    void addNewProfile();
 signals:
     void hide_();
     void show_();
@@ -32,6 +35,7 @@ private:
     QGridLayout *gridLay;
 
     QLabel *windowCaption;
+    QLabel *errorMessage;
 
     ExLabel *profileAvaLabel;
 
@@ -45,17 +49,20 @@ private:
     QLineEdit *profileNameLE;
     QLineEdit *profilePasswordFirstLE;
     QLineEdit *profilePasswordSecondLE;
+    Profile *currentProfile;
 
 
 public slots:
     void animatedHide();
-
-private slots:
+    void onAvatarCliked();
     void onCancelExButtonclicked();
     void onSaveAndContinueExButtonClicked();
     void onExtendedSetupExButtonClicked();
     void onAddEmailExButtonClicked();
     void clearAllContent();
+
+private slots:
+    void createTempProfile();
 
 };
 

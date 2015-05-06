@@ -2,6 +2,8 @@
 
 MainWindow::MainWindow(QWidget *parent):QFrame(parent)
 {
+    mpos=pos();
+    canMove=false;
     //temporary settings//
     mainWindowStartSize.setHeight(600);
     mainWindowStartSize.setWidth(800);
@@ -53,6 +55,10 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
     /*overLay*/
     initOverLay();
     /*********/
+
+    /*profiles init*/
+    initProfiles();
+    /***************/
 }
 
 void MainWindow::initControllExButtons(){
@@ -105,7 +111,7 @@ void MainWindow::initDefaultStyle(){
     move(mainWindownStartPoint);
     setMinimumSize(mainWindowMinSize);
     initColors();
-    setStyleSheet("QFrame {border: 1px solid lightgrey; background: white}");
+    setStyleSheet("border: 1px solid lightgrey; background: white");
 
 }
 
@@ -168,6 +174,8 @@ void MainWindow::initOverLay(){
     overLay->setGeometry(0, 0, width(), height());
     overLay->setStyleSheet("background-color:"+overlayBackGroundColor);
     overLay->hide();
+    connect (MainProfileWindow, SIGNAL(hide_()), overLay, SLOT(hide()));
+    connect (MainProfileWindow, SIGNAL(show_()), overLay, SLOT(show()));
 }
 
 void MainWindow::initMenuExButtons(){
@@ -236,6 +244,14 @@ void MainWindow::initColors(){
     overlayBackGroundColor ="rgba(130, 130, 130, 50%)";
 }
 
+void MainWindow::initProfiles(){
+
+    openAllProfilesInf();
+    openAllprofiles();
+
+    MainProfileWindow->setProfileList(profileList);
+}
+
 MainWindow::~MainWindow(){
 
 }
@@ -271,8 +287,55 @@ QString MainWindow::getOverlayBackGroundColor(){
     return overlayBackGroundColor;
 }
 
+bool MainWindow::openAllProfilesInf(){
+    QString allProfiles = "C:\\Users\\Mera\\Documents\\GitHub\\Tai-tai\\Accounts\\AllProfiles.txt";
+
+    QFile file(allProfiles);
+    if (file.open(QFile::ReadOnly)==(-1)){
+        return false;
+    }
+    if(!file.isOpen())
+        return false;
+
+    QDataStream in(&file);
+
+    while (!in.atEnd()){
+        QString *temp = new QString();
+        in>>*temp;
+        profilesSaveWays.append(temp);
+        qDebug()<<*temp;
+    }
+    file.close();
+    return true;
+}
+
+bool MainWindow::openAllprofiles(){
+    QString tempProfileSaveWay;
+
+    if (profilesSaveWays.count()==0)
+        return false;
+    int count = profilesSaveWays.count();
+
+    for (int i=0;i<count;++i){
+        Profile *tempProfile = new Profile();
+        QFile file(*profilesSaveWays.at(i));
+        if (!file.open(QIODevice::ReadOnly)) {
+            //"Unable to open file");
+            file.close();
+            return false;
+        }
+        QDataStream in(&file);
+
+        in>> *tempProfile;
+        profileList.append(tempProfile);
+        file.close();
+    }
+    return true;
+}
+
 void MainWindow::showProfileWindow(){
     MainProfileWindow->StartShowAnim(0, 0, mainWindowStartSize.width()/2-100, mainWindowStartSize.height());
+    overLay->raise();
     MainProfileWindow->raise();
 }
 
@@ -309,7 +372,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event){
     }
 }
 void MainWindow::mouseMoveEvent(QMouseEvent *event){
-    if((event->buttons() & Qt::LeftButton) && canMove)
+    if((event->buttons() & Qt::LeftButton) && canMove){
         move(event->globalPos()-mpos);
+    }
 }
-

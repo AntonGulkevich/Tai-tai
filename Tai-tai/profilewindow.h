@@ -22,6 +22,10 @@ public:
     ~ProfileWindow();
     void StartHideAnim(int left, int top, int width, int height);
     void StartShowAnim(int left, int top, int width, int height);
+    void setProfileList(const QList <Profile*> list);
+    void setCurrentProfile(Profile *profile);
+    void setCurrentProfile(int pos);
+
 
 signals:
     void hide_();
@@ -37,6 +41,8 @@ public slots:
     void editExButtonLeftClicked();
     void exitExButtonLeftClicked();
     void backExButtonLeftClicked();
+    void onNextProfileButttonClicked();
+    void onPreviousProfileButtonClicked();
 
 
 private:
@@ -64,6 +70,11 @@ private:
     ExLabel *profileAvaLabel;
     QLineEdit * profilePasswordEdit;
     ProfileSetupWindow * profileSetWin;
+    QList <Profile*> profileList;
+    Profile *currentProfile;
+    int currentProfileNumber;
+protected:
+    void mouseReleaseEvent(QMouseEvent *event);
 };
 
 #endif // PROFILEWINDOW_H

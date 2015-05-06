@@ -26,7 +26,7 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     mainLay->addLayout(topLay);
     mainLay->addLayout(botLayl);
     setStyleSheet("QLabel { border: 0 px}");
-    /**********/    
+    /**********/
     QWidget *labelCaptionBack = new QWidget();
     labelCaptionBack->setStyleSheet("background-color:rgba(250, 250, 250); border: 0px");
     QBoxLayout *labelcaptionLay = new QBoxLayout(QBoxLayout::TopToBottom);
@@ -43,7 +43,7 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
 
     QFrame *h_line = new QFrame();
     h_line->setFrameStyle(QFrame::HLine| QFrame::Raised);
-    h_line->setStyleSheet("border: 0px; border-top: 1px solid gray");
+    h_line->setStyleSheet("border: 0px; border-top: 1px solid lightgray");
 
     QLabel * profileCaptionLabel = new QLabel("Name of the new profile:");
     profileNameLE = new QLineEdit();
@@ -62,6 +62,10 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     profilePasswordSecondLE = new QLineEdit();
     profilePasswordSecondLE->setEchoMode(QLineEdit::Password);
 
+    errorMessage =  new QLabel("");
+    errorMessage->setStyleSheet("color:red");
+    errorMessage->hide();
+
     topLay->addWidget(labelCaptionBack, 1);
     topLay->addWidget(h_line, 1);
     topLay->addSpacing(5);
@@ -76,6 +80,7 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     gridLay->addWidget(profilePasswordSecondLE,2, 1, Qt::AlignLeft);
 
     topLay->addLayout(gridLay);
+    topLay->addWidget(errorMessage, 0, Qt::AlignHCenter);
 
     botLayl->addStretch(1);
 
@@ -89,7 +94,7 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     cancel->setRotation(273);
     cancel->setImage(":/resourses/icons/cancel_nb.png");
     cancel->setImageMargin(margin);
-    cancel->setToolTip("Login in current account.");
+    cancel->setToolTip("Close this window.");
 
     saveAndContinue = new ExButton(this,  "Save", radius, 1);
     saveAndContinue->setImage(":/resourses/icons/check_nb.png");
@@ -123,7 +128,11 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     connect(extendedSetup, SIGNAL(leftClicked()), this, SLOT(onExtendedSetupExButtonClicked()));
     connect(addEmail, SIGNAL(leftClicked()), this, SLOT(onAddEmailExButtonClicked()));
     connect(this, SIGNAL(hide_()), this, SLOT(clearAllContent()));
+    connect (profileAvaLabel, SIGNAL(clicked()), this, SLOT(onAvatarCliked()));
+    connect (this, SIGNAL(show_()), this , SLOT(createTempProfile()));
     /*************/
+
+
 }
 
 void ProfileSetupWindow::StartShowAnim(int left, int top, int width, int height){
@@ -133,6 +142,7 @@ void ProfileSetupWindow::StartShowAnim(int left, int top, int width, int height)
     animation->setStartValue(QRect(left, top, 0, height));
     animation->setEndValue(QRect(left, top, width, height));
     animation->start(QAbstractAnimation::DeleteWhenStopped);
+    emit show_();
 }
 
 void ProfileSetupWindow::StartHideAnim(int left, int top, int width, int height){
@@ -156,6 +166,22 @@ bool ProfileSetupWindow::isCorrectLineEdit(QLineEdit *lineEdit){
     }
 }
 
+void ProfileSetupWindow::addNewProfile(){
+    QString login;
+    QString password1;
+    login = profileNameLE->text();
+    password1 = profilePasswordFirstLE->text();
+
+    currentProfile->setSaveWay(currentProfile->getSaveWay()+login+".txt");
+    currentProfile->setLogin(profileNameLE->text());
+    currentProfile->setPasswordText(password1);
+    currentProfile->saveprofile();
+    currentProfile->addToAllProfiles();
+
+    delete(currentProfile);
+    animatedHide();
+}
+
 void ProfileSetupWindow::onCancelExButtonclicked(){
     animatedHide();
 
@@ -165,9 +191,56 @@ void ProfileSetupWindow::animatedHide(){
     emit hide_();
 }
 
+void ProfileSetupWindow::onAvatarCliked(){
+    QString fileName =QFileDialog::getOpenFileName(this,
+                                                   tr("Open avatar"), "*.png",
+                                                   tr("pmg (*.png);;All Files (*)"));
+    if (fileName.isEmpty())
+        return;
+    else {
+        currentProfile->setAvatar(fileName);
+        QPixmap ava(fileName);
+        profileAvaLabel->setPixmap(ava);
+    }
+}
+
 void ProfileSetupWindow::onSaveAndContinueExButtonClicked(){
+    QString login;
+    QString password1;
+    QString password2;
+    login = profileNameLE->text();
+    password1 = profilePasswordFirstLE->text();
+    password2 = profilePasswordSecondLE->text();
 
-
+    bool correctInput=true;
+    bool similarPasswords=true;
+    if (!isCorrectLineEdit(profileNameLE)){
+        correctInput=false;
+    }
+    if(!isCorrectLineEdit(profilePasswordFirstLE)){
+        correctInput=false;
+    }
+    if (!isCorrectLineEdit(profilePasswordSecondLE)){
+        correctInput=false;
+    }
+    if (password1!=password2){
+        similarPasswords=false;
+    }
+    if (!similarPasswords){
+        profilePasswordFirstLE->setText("");
+        profilePasswordSecondLE->setText("");
+        isCorrectLineEdit(profilePasswordFirstLE);
+        isCorrectLineEdit(profilePasswordSecondLE);
+        errorMessage->setText("Different passwords.");
+        errorMessage->show();
+    }
+    if (!correctInput){
+        errorMessage->setText("All fields must be filled.");
+        errorMessage->show();
+        return;
+    }
+    errorMessage->hide();
+    addNewProfile();
 }
 
 void ProfileSetupWindow::onExtendedSetupExButtonClicked(){
@@ -179,9 +252,17 @@ void ProfileSetupWindow::onAddEmailExButtonClicked(){
 }
 
 void ProfileSetupWindow::clearAllContent(){
+    profileNameLE->setStyleSheet("");
+    profilePasswordFirstLE->setStyleSheet("");
+    profilePasswordSecondLE->setStyleSheet("");
+    errorMessage->hide();
     profileNameLE->clear();
     profilePasswordFirstLE->clear();
     profilePasswordSecondLE->clear();
     QPixmap avadef(":/resourses/icons/ava_def.jpg");
     profileAvaLabel->setPixmap(avadef);
+}
+
+void ProfileSetupWindow::createTempProfile(){
+     currentProfile = new Profile();
 }

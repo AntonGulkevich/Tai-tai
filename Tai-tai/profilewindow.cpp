@@ -112,7 +112,7 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     exitExButton->setImageMargin(margin);
 
     backExButton = new ExButton(this,  "Back", radius, 1);
-    backExButton->setImage(":/resourses/icons/cancel_nb.png");
+    backExButton->setImage(":/resourses/icons/back_nb.png");
     backExButton->setImageMargin(10);
 
     groupEx = new GroupExButtons();
@@ -154,13 +154,17 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     profileHorLay->setMargin(0);
     profileHorLay->setSpacing(0);
 
+    connect(nextProfileButtton, SIGNAL(leftClicked()), this , SLOT(onNextProfileButttonClicked()));
+
+    connect(previousProfileButton, SIGNAL(leftClicked()), this, SLOT(onPreviousProfileButtonClicked()));
+
     /*end of exButtons*/
 
     /*profile setup window*/
     profileSetWin = new ProfileSetupWindow(this);
 
     /*********************/
-
+    currentProfileNumber =-1;
     hide();
 }
 ProfileWindow::~ProfileWindow(){
@@ -229,6 +233,42 @@ void ProfileWindow::backExButtonLeftClicked(){
         groupEx->startAnimation();
     }
     animatedHide();
+}
+
+void ProfileWindow::onNextProfileButttonClicked(){
+    int count = profileList.count();
+    if ((++currentProfileNumber)>=count){
+        currentProfileNumber=0;
+    }
+    setCurrentProfile(currentProfileNumber);
+}
+
+void ProfileWindow::onPreviousProfileButtonClicked(){
+    int count = profileList.count();
+    if ((--currentProfileNumber)<0){
+        currentProfileNumber=count-1;
+    }
+    setCurrentProfile(currentProfileNumber);
+}
+
+void ProfileWindow::setProfileList(const QList <Profile*> list){
+    profileList=list;
+}
+
+void ProfileWindow::setCurrentProfile(Profile *profile){
+    currentProfile = profile;
+}
+
+void ProfileWindow::setCurrentProfile(int pos){
+    currentProfile = profileList.at(pos);
+
+    profileNameLabel->setText(currentProfile->getLogin());
+    QPixmap avadef(currentProfile->getAvatar());
+    profileAvaLabel->setPixmap(avadef);
+}
+
+void ProfileWindow::mouseReleaseEvent(QMouseEvent *event){
+
 }
 
 void ProfileWindow::StartHideAnim(int left, int top, int width, int height){

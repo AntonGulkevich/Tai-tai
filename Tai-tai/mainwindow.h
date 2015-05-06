@@ -11,6 +11,7 @@
 
 #include "profilewindow.h"
 #include "exbutton.h"
+#include "trackwidget.h"
 
 
 class MainWindow : public QFrame
@@ -53,6 +54,7 @@ private:
 
     /*overlay*/
     QWidget * overLay;
+    TrackWidget *trackBar;
 
     /*initialization*/
     void initControllExButtons();
@@ -62,6 +64,10 @@ private:
     void initOverLay();
     void initMenuExButtons();
     void initColors();
+    void initProfiles();
+    /*profile list*/
+    QList <Profile*> profileList;
+    QList <QString*> profilesSaveWays;
 
 public:
     MainWindow(QWidget *parent = 0);
@@ -75,6 +81,8 @@ public:
     void setMainBackGroudColor(const QString &color);
     void setAdditionBackGroundColor(const QString &color);
     void setOverlayBackGroundColor(const QString &color);
+    bool openAllProfilesInf();
+    bool openAllprofiles();
     /********/
 
 private slots:
