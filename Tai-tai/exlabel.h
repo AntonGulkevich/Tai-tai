@@ -34,6 +34,8 @@ public:
     void setFonts(int act , int sel, int uns);
 signals:
     void clicked();
+    void mouseEntered();
+    void mouseLeaved();
 
 public slots:
     void OnClick();

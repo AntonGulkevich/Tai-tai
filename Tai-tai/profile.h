@@ -19,12 +19,12 @@ public:
     QString getLogin();
     int getEmailCount();
     QString getSaveWay();
+    QString getAllProfilesSaveWay();
 
     bool verification(const QString &password);
     bool saveprofile();
     bool addNewEmail(const QString &loginEmail, const QString &passEmail);
     bool addToAllProfiles();
-    bool openProfile(const QString &way);
 
     friend QDataStream & operator <<(QDataStream & out, const Profile& profile_);
     friend QDataStream & operator >>(QDataStream & in, Profile& profile_ );

@@ -30,7 +30,9 @@ SOURCES += main.cpp\
     threadimap.cpp \
     basepop3.cpp \
     pop3.cpp \
-    trackwidget.cpp
+    trackwidget.cpp \
+    profileeditwindow.cpp \
+    emaileditwindow.cpp
 
 HEADERS  += mainwindow.h \
     profilewindow.h \
@@ -50,7 +52,9 @@ HEADERS  += mainwindow.h \
     smtp.h \
     threadimap.h \
     threadpop3.h \
-    trackwidget.h
+    trackwidget.h \
+    profileeditwindow.h \
+    emaileditwindow.h
 
 RESOURCES += \
     icons.qrc

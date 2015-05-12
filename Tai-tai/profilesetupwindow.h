@@ -26,6 +26,7 @@ public:
 signals:
     void hide_();
     void show_();
+    void profileAdded();
 
 private:
     QPropertyAnimation * animation;
@@ -50,6 +51,8 @@ private:
     QLineEdit *profilePasswordFirstLE;
     QLineEdit *profilePasswordSecondLE;
     Profile *currentProfile;
+
+    QString defaultAva;
 
 
 public slots:

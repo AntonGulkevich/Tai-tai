@@ -41,6 +41,7 @@ void ExLabel::leaveEvent(QEvent *event){
     QWidget::leaveEvent(event);
     if (pixmap())
         setStyleSheet(inActiveStyleSheet);
+    emit mouseLeaved();
 }
 void ExLabel::enterEvent(QEvent *event){
     if (active){
@@ -52,6 +53,7 @@ void ExLabel::enterEvent(QEvent *event){
     QWidget::enterEvent(event);
     if (pixmap())
         setStyleSheet(activeStyleSheet);
+    emit mouseEntered();
 }
 void ExLabel::SetSelectedFont(const QFont &font){
     *selectedFont= font;

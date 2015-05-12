@@ -1,31 +1,35 @@
 #include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent):QFrame(parent)
-{
-    mpos=pos();
-    canMove=false;
-    //temporary settings//
-    mainWindowStartSize.setHeight(600);
-    mainWindowStartSize.setWidth(800);
-    mainWindownStartPoint.setX(400);
-    mainWindownStartPoint.setY(100);
-    mainWindowMinSize.setHeight(550);
-    mainWindowMinSize.setWidth(500);
-    //temporary settings//
+{    
+    /*temporary settings*/
+    initDefSettings();
 
     /*style of main window*/
     initDefaultStyle();
-    /*********************/
 
-    MainProfileWindow = new ProfileWindow(this);
+    /*Profile Windows*/
+    initProfileSetupWindow();
+    initProfileEditWindow();
+    initProfileWindow();
 
     /*layouts setup and init*/
     initLayouts();
-    /************************/
 
     /*setup top controll layout*/
     initTopControllLayout();
-    /**************************/
+
+    /*menu of ExButtons*/
+    initMenuExButtons();
+
+    /*sentrall layout*/
+    initCentrallWidget();
+
+    /*overLay*/
+    initOverLay();
+
+    /*profiles init*/
+    initProfiles();
 
     /*scroll areal example
     QScrollArea *scrollArea = new QScrollArea(this);
@@ -38,27 +42,23 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
     scrollArea->setWidget(scrollWidget);
     leftTopLay->addWidget(scrollArea, 0);
 
-    centrallLay->addWidget(new QLabel("This is a test"), 1);
     */
 
-    /*menu of ExButtons*/
-    initMenuExButtons();
-    /********************/
+     profileEditWindow->StartShowAnim(0,0,300, height());
+}
 
-    /*sentrall layout*/
-    QWidget * centrallBackWidget =  new QWidget();
-    centrallBackWidget->setStyleSheet("background-color:white; border: 0px");
-    centrallLay->addWidget(centrallBackWidget);
+void MainWindow::initDefSettings(){
+    mpos=pos();
+    canMove=false;
+    //temporary settings//
+    mainWindowStartSize.setHeight(600);
+    mainWindowStartSize.setWidth(800);
+    mainWindownStartPoint.setX(400);
+    mainWindownStartPoint.setY(100);
+    mainWindowMinSize.setHeight(550);
+    mainWindowMinSize.setWidth(500);
+    currentProfile= NULL;
     this->installEventFilter(this);
-    /*****************/
-
-    /*overLay*/
-    initOverLay();
-    /*********/
-
-    /*profiles init*/
-    initProfiles();
-    /***************/
 }
 
 void MainWindow::initControllExButtons(){
@@ -93,14 +93,23 @@ void MainWindow::initControllExButtons(){
 
 
     collapseToWindow = new ExButton(this,  "C", radius, 0);
-    collapseToWindow->setImage(":/resourses/icons/minimize2.png");
+    collapseToWindow->setImage(":/resourses/icons/restore.png");
     collapseToWindow->setImageMargin(margin);
     collapseToWindow->setToolTip("Collapse to window.");
     collapseToWindow->setFixedSize(radius, radius);
     collapseToWindow->hide();
 
 
-    profileNameExLabel = new ExLabel("Default profile");
+    profileNameExLabel = new ExLabel("Profile");
+
+    connect(closeProgramm, SIGNAL(leftClicked()), this, SLOT(onCloseButtonClicked()));
+    connect (hideToTray, SIGNAL(leftClicked()), this, SLOT(showMinimized()));
+    connect(expandToWindow, SIGNAL(leftClicked()), this, SLOT(showFullScreen()));
+    connect(expandToWindow, SIGNAL(leftClicked()), expandToWindow, SLOT(hide()));
+    connect(expandToWindow, SIGNAL(leftClicked()), collapseToWindow, SLOT(show()));
+    connect(collapseToWindow, SIGNAL(leftClicked()), this, SLOT(showNormal()));
+    connect(collapseToWindow, SIGNAL(leftClicked()), collapseToWindow, SLOT(hide()));
+    connect(collapseToWindow, SIGNAL(leftClicked()), expandToWindow, SLOT(show()));
 
 }
 
@@ -112,7 +121,6 @@ void MainWindow::initDefaultStyle(){
     setMinimumSize(mainWindowMinSize);
     initColors();
     setStyleSheet("border: 1px solid lightgrey; background: white");
-
 }
 
 void MainWindow::initLayouts(){
@@ -135,7 +143,6 @@ void MainWindow::initLayouts(){
     mainLay->addLayout(centrallLay);
 
     setLayout(mainLay);
-
 }
 
 void MainWindow::initTopControllLayout(){
@@ -249,7 +256,34 @@ void MainWindow::initProfiles(){
     openAllProfilesInf();
     openAllprofiles();
 
-    MainProfileWindow->setProfileList(profileList);
+    MainProfileWindow->setProfileList(&profileList);
+    MainProfileWindow->setProfileSaveWays(&profilesSaveWays);
+}
+
+void MainWindow::initProfileWindow(){
+    MainProfileWindow = new ProfileWindow(this);
+    MainProfileWindow->setProfileEditWindow(profileEditWindow);
+    MainProfileWindow->setProfileSetupWindow(profileSetupWindow);
+
+    connect(MainProfileWindow, SIGNAL(profileAdded()), this, SLOT(updateProfiles()));
+    connect (MainProfileWindow, SIGNAL(profileDeleted()), this, SLOT(updateProfiles()));
+    connect(MainProfileWindow, SIGNAL(profileLogged(Profile*)), this , SLOT(loginProfile(Profile*)));
+    connect(MainProfileWindow, SIGNAL(profileLogout()), this, SLOT(logoutProfile()));
+}
+
+void MainWindow::initCentrallWidget(){
+    QWidget * centrallBackWidget =  new QWidget();
+    centrallBackWidget->setStyleSheet("background-color:white; border: 0px");
+    centrallLay->addWidget(centrallBackWidget);
+}
+
+void MainWindow::initProfileSetupWindow(){
+    profileSetupWindow = new ProfileSetupWindow(this);
+
+}
+
+void MainWindow::initProfileEditWindow(){
+    profileEditWindow = new ProfileEditWindow(this);
 }
 
 MainWindow::~MainWindow(){
@@ -318,7 +352,9 @@ bool MainWindow::openAllprofiles(){
 
     for (int i=0;i<count;++i){
         Profile *tempProfile = new Profile();
-        QFile file(*profilesSaveWays.at(i));
+        QString curWay;
+        curWay =*profilesSaveWays.at(i);
+        QFile file (curWay);
         if (!file.open(QIODevice::ReadOnly)) {
             //"Unable to open file");
             file.close();
@@ -327,6 +363,7 @@ bool MainWindow::openAllprofiles(){
         QDataStream in(&file);
 
         in>> *tempProfile;
+        tempProfile->setSaveWay(curWay);
         profileList.append(tempProfile);
         file.close();
     }
@@ -341,6 +378,27 @@ void MainWindow::showProfileWindow(){
 
 void MainWindow::hideProfileWindow(){
     MainProfileWindow->StartHideAnim(0, 0, mainWindowStartSize.width()/2-100, mainWindowStartSize.height());
+}
+
+void MainWindow::updateProfiles(){
+    profileList.clear();
+    profilesSaveWays.clear();
+    initProfiles();
+
+}
+
+void MainWindow::loginProfile(Profile *profile){
+    currentProfile = profile;
+    profileNameExLabel->setText(currentProfile->getLogin());
+}
+
+void MainWindow::logoutProfile(){
+    currentProfile = NULL;
+    profileNameExLabel->setText("Profiles");
+}
+
+void MainWindow::onCloseButtonClicked(){
+    exit(0);
 }
 bool MainWindow::eventFilter(QObject *obj, QEvent *event){
     if (event->type() == QEvent::KeyPress){

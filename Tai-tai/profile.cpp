@@ -37,6 +37,10 @@ QString Profile::getSaveWay(){
     return saveWay;
 }
 
+QString Profile::getAllProfilesSaveWay(){
+    return allProfilesSaveWay;
+}
+
 bool Profile::verification(const QString &password){
     if (password==passwordText){
         return true;
@@ -73,10 +77,6 @@ bool Profile::addToAllProfiles(){
     out<<saveWay;
     file.close();
     return true;
-}
-
-bool Profile::openProfile(const QString &way){
-
 }
 
 QDataStream & operator<<(QDataStream & out, const Profile& profile_){

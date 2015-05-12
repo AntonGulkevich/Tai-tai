@@ -10,6 +10,8 @@
 #include <QScrollArea>
 
 #include "profilewindow.h"
+#include "profilesetupwindow.h"
+#include "profileeditwindow.h"
 #include "exbutton.h"
 #include "trackwidget.h"
 
@@ -20,14 +22,15 @@ class MainWindow : public QFrame
 private:
     QPoint mpos;
     bool canMove;
-    ProfileWindow * MainProfileWindow;
     QSize mainWindowStartSize;
     QSize mainWindowMinSize;
     QPoint mainWindownStartPoint;
+
     /*layouts*/
     QBoxLayout * mainLay;
     QBoxLayout * topControllLay;
     QBoxLayout * centrallLay;
+
     /*exbuttons of top lay*/
     ExButton * settingsGenegal;
     ExButton * closeProgramm;
@@ -36,6 +39,7 @@ private:
     ExButton * collapseToWindow;
     /*exlabels of top lay*/
     ExLabel * profileNameExLabel;
+
     /*exbuttos of menu*/
     ExButton * writeNewMail;
     ExButton * refreshMail;
@@ -45,7 +49,6 @@ private:
     ExButton * contactList;
     ExButton * toHome;
     ExButton * findList;
-
     GroupExButtons * groupMenu;
     /*colors*/
     QString mainBackGroudColor;
@@ -57,6 +60,7 @@ private:
     TrackWidget *trackBar;
 
     /*initialization*/
+    void initDefSettings();
     void initControllExButtons();
     void initDefaultStyle();
     void initLayouts();
@@ -65,9 +69,20 @@ private:
     void initMenuExButtons();
     void initColors();
     void initProfiles();
-    /*profile list*/
+    void initProfileWindow();
+    void initCentrallWidget();
+    void initProfileSetupWindow();
+    void initProfileEditWindow();
+
+    /*profiles*/
     QList <Profile*> profileList;
     QList <QString*> profilesSaveWays;
+    Profile * currentProfile;
+
+    /*windows*/
+    ProfileWindow * MainProfileWindow;
+    ProfileSetupWindow *profileSetupWindow;
+    ProfileEditWindow *profileEditWindow;
 
 public:
     MainWindow(QWidget *parent = 0);
@@ -88,6 +103,11 @@ public:
 private slots:
     void showProfileWindow();
     void hideProfileWindow();
+    void updateProfiles();
+    void loginProfile(Profile *profile);
+    void logoutProfile();
+
+    void onCloseButtonClicked();
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

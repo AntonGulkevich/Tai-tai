@@ -9,8 +9,153 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     setWindowFlags(Qt::FramelessWindowHint);
     setStyleSheet("QFrame{background-color: white }");
+    currentProfileNumber =0;
 
     /*LAYOUTS*/
+    initLayouts();
+
+    /*Profile layout*/
+    setupProfileLayout();
+
+    /*profile button's rose*/
+    setupExButtons();
+
+    /*next prev buttons*/
+    setupNextPrevExButtons();
+
+
+    profileHorLay->addWidget(previousProfileButton, 0, Qt::AlignRight);
+    profileHorLay->addLayout(topLay);
+    profileHorLay->addWidget(nextProfileButtton, 0, Qt::AlignLeft);
+    profileHorLay->setMargin(0);
+    profileHorLay->setSpacing(0);
+
+    hide();
+}
+ProfileWindow::~ProfileWindow(){
+
+}
+void ProfileWindow::StartShowAnim(int left, int top, int width, int height){
+    show();
+    animation = new QPropertyAnimation(this, "geometry");
+    animation->setDuration(300);
+    animation->setStartValue(QRect(left, top, 0, height));
+    animation->setEndValue(QRect(left, top, width, height));
+
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+    emit show_();
+}
+
+void ProfileWindow::drawButton(){
+
+
+}
+
+void ProfileWindow::animatedHide(){
+    StartHideAnim(0, 0, width(), height());
+    emit hide_();
+}
+
+void ProfileWindow::loginExButtonLeftClicked(){
+    if (!groupEx->isDefaultButton(loginExButton)){
+        //  groupEx->setDefaultButton("Login");
+        groupEx->startAnimation();
+    }
+    if (profilesSaveWays->isEmpty()){
+        return;
+    }
+    QString password = profilePasswordEdit->text();
+    if (currentProfile->verification(password)){
+        emit profileLogged(currentProfile);
+        profilePasswordEdit->setText("");
+        animatedHide();
+    }
+    else{
+        errorMessageLabel->setText("Wrong password.");
+        errorMessageLabel->show();
+    }
+}
+
+void ProfileWindow::createExButtonLeftClicked(){
+    if (!groupEx->isDefaultButton(createExButton)){
+        // groupEx->setDefaultButton("Create");
+        groupEx->startAnimation();
+    }
+    profileSetWin->StartShowAnim(0, 0, width(), height());
+}
+
+void ProfileWindow::deleteExButtonLeftClicked(){
+    if (!groupEx->isDefaultButton(deleteExButton)){
+        //   groupEx->setDefaultButton("Delete");
+        groupEx->startAnimation();
+    }
+    if (profilesSaveWays->isEmpty()){
+        return;
+    }
+    deleteProfile();
+}
+
+void ProfileWindow::editExButtonLeftClicked(){
+    if (!groupEx->isDefaultButton(editExButton)){
+        //    groupEx->setDefaultButton("Edit");
+        groupEx->startAnimation();
+    }
+    if (profilesSaveWays->isEmpty()){
+        return;
+    }
+    profileEditWin->StartShowAnim(0,0,width(), height());
+}
+
+void ProfileWindow::exitExButtonLeftClicked(){
+    if (!groupEx->isDefaultButton(exitExButton)){
+        //    groupEx->setDefaultButton("Logout");
+        groupEx->startAnimation();
+    }
+    if (profilesSaveWays->isEmpty()){
+        return;
+    }
+    emit profileLogout();
+}
+
+void ProfileWindow::backExButtonLeftClicked(){
+    if (!groupEx->isDefaultButton(backExButton)){
+        //    groupEx->setDefaultButton("Back");
+        groupEx->startAnimation();
+    }
+    animatedHide();
+}
+
+void ProfileWindow::onNextProfileButttonClicked(){
+    if (profilesSaveWays->isEmpty())
+        return;
+    int count = profileList->count();
+    if ((++currentProfileNumber)>=count){
+        currentProfileNumber=0;
+    }
+    setCurrentProfile(currentProfileNumber);
+}
+
+void ProfileWindow::onPreviousProfileButtonClicked(){
+    if (profilesSaveWays->isEmpty())
+        return;
+    int count = profileList->count();
+    if ((--currentProfileNumber)<0){
+        currentProfileNumber=count-1;
+    }
+    setCurrentProfile(currentProfileNumber);
+}
+
+void ProfileWindow::onProfileAdded(){
+    emit profileAdded();
+}
+
+void ProfileWindow::setDefaultProfile(){
+    QPixmap avadef(":/resourses/icons/ava_def.jpg");
+    profileAvaLabel->setPixmap(avadef);
+    profileNameLabel->setText("Default Profile");
+}
+
+void ProfileWindow::initLayouts(){
     bigLay = new QBoxLayout(QBoxLayout::TopToBottom, this);
     topLay = new QBoxLayout(QBoxLayout::TopToBottom);
     botLay = new QBoxLayout(QBoxLayout::TopToBottom);
@@ -20,12 +165,10 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     bigLay->setSpacing(0);
 
     bigLay->addLayout(profileHorLay, 1);
-    bigLay->addLayout(botLay, 1);    
+    bigLay->addLayout(botLay, 1);
+}
 
-    /****************************/
-
-    /*Profile layout*/
-
+void ProfileWindow::setupProfileLayout(){
     profileFrame = new QWidget();
     profileLay= new QBoxLayout(QBoxLayout::TopToBottom);
     profileLay->setMargin(1);
@@ -74,18 +217,26 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     profileLay->addWidget(profilePasswordEdit, 0, Qt::AlignHCenter);
     profileFrame->setMaximumSize(profileNameLabel->width()+2,
                                  profileNameLabel->height()+profileAvaLabel->height()+profilePasswordEdit->height()+2);
+
+    errorMessageLabel = new QLabel();
+    errorMessageLabel->setStyleSheet("color:red; border: 0px");
+    errorMessageLabel->hide();
+
     topLay->addStretch(1);
     topLay->addWidget(profileFrame, 1,  Qt::AlignHCenter);
+    topLay->addWidget(errorMessageLabel);
     topLay->addStretch(1);
 
-    topLay->setSpacing(0);    
+    topLay->setSpacing(0);
     topLay->setMargin(10);
 
     botLay->addStretch(1);
 
-    /*Ex buttons*/
+    connect(profilePasswordEdit, SIGNAL(textEdited(QString)), errorMessageLabel, SLOT(hide()));
 
-    /*profile button's rose*/
+}
+
+void ProfileWindow::setupExButtons(){
     int margin =5;
     int radius=50;
     loginExButton = new ExButton(this,  "Login", radius, 0);
@@ -131,10 +282,11 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     connect(exitExButton, SIGNAL(leftClicked()), SLOT(exitExButtonLeftClicked()));
     connect(backExButton, SIGNAL(leftClicked()), SLOT(backExButtonLeftClicked()));
 
+}
 
-    /*next prev buttons*/
-
+void ProfileWindow::setupNextPrevExButtons(){
     int radiusNextPrev =30;
+    int margin =5;
 
     nextProfileButtton= new ExButton(this, "Next", radiusNextPrev, 0);
     nextProfileButtton->setImage(":/resourses/icons/ch_right.png");
@@ -148,111 +300,39 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     previousProfileButton->setToolTip("Select previous profile.");
     previousProfileButton->setFixedSize(radiusNextPrev, radiusNextPrev);
 
-    profileHorLay->addWidget(previousProfileButton, 0, Qt::AlignRight);
-    profileHorLay->addLayout(topLay);
-    profileHorLay->addWidget(nextProfileButtton, 0, Qt::AlignLeft);
-    profileHorLay->setMargin(0);
-    profileHorLay->setSpacing(0);
-
     connect(nextProfileButtton, SIGNAL(leftClicked()), this , SLOT(onNextProfileButttonClicked()));
-
     connect(previousProfileButton, SIGNAL(leftClicked()), this, SLOT(onPreviousProfileButtonClicked()));
-
-    /*end of exButtons*/
-
-    /*profile setup window*/
-    profileSetWin = new ProfileSetupWindow(this);
-
-    /*********************/
-    currentProfileNumber =-1;
-    hide();
-}
-ProfileWindow::~ProfileWindow(){
-
-}
-void ProfileWindow::StartShowAnim(int left, int top, int width, int height){
-    show();
-    animation = new QPropertyAnimation(this, "geometry");
-    animation->setDuration(300);
-    animation->setStartValue(QRect(left, top, 0, height));
-    animation->setEndValue(QRect(left, top, width, height));
-
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
-    emit show_();
 }
 
-void ProfileWindow::drawButton(){
-
-
-}
-
-void ProfileWindow::animatedHide(){
-    StartHideAnim(0, 0, width(), height());
-    emit hide_();
-}
-
-void ProfileWindow::loginExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(loginExButton)){
-      //  groupEx->setDefaultButton("Login");
-        groupEx->startAnimation();
-    }
-}
-
-void ProfileWindow::createExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(createExButton)){
-       // groupEx->setDefaultButton("Create");
-        groupEx->startAnimation();
-    }
-    profileSetWin->StartShowAnim(0, 0, width(), height());
-}
-
-void ProfileWindow::deleteExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(deleteExButton)){
-     //   groupEx->setDefaultButton("Delete");
-        groupEx->startAnimation();
-    }
-}
-
-void ProfileWindow::editExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(editExButton)){
-    //    groupEx->setDefaultButton("Edit");
-        groupEx->startAnimation();
-    }
-}
-
-void ProfileWindow::exitExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(exitExButton)){
-    //    groupEx->setDefaultButton("Logout");
-        groupEx->startAnimation();
-    }
-}
-
-void ProfileWindow::backExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(backExButton)){
-    //    groupEx->setDefaultButton("Back");
-        groupEx->startAnimation();
-    }
-    animatedHide();
-}
-
-void ProfileWindow::onNextProfileButttonClicked(){
-    int count = profileList.count();
-    if ((++currentProfileNumber)>=count){
-        currentProfileNumber=0;
-    }
+void ProfileWindow::deleteProfile(){
     setCurrentProfile(currentProfileNumber);
-}
+    QFile::remove(currentProfile->getSaveWay());
+    QFile::resize(currentProfile->getAllProfilesSaveWay(), 0);
 
-void ProfileWindow::onPreviousProfileButtonClicked(){
-    int count = profileList.count();
-    if ((--currentProfileNumber)<0){
-        currentProfileNumber=count-1;
+    profileList->removeAt(currentProfileNumber);
+    profilesSaveWays->removeAt(currentProfileNumber);
+    updateAllProfilesSaveWays();
+    currentProfileNumber=0;
+
+    if(profileList->isEmpty()){
+        setDefaultProfile();
     }
-    setCurrentProfile(currentProfileNumber);
+
+    emit profileDeleted();
 }
 
-void ProfileWindow::setProfileList(const QList <Profile*> list){
-    profileList=list;
+void ProfileWindow::setProfileList(QList <Profile*> *list){
+    if (list->isEmpty()){
+        /*WARNING*/
+    }
+    else{
+        profileList=list;
+        setCurrentProfile(0);
+    }
+}
+
+void ProfileWindow::setProfileSaveWays(QList<QString *> *list){
+    profilesSaveWays = list;
 }
 
 void ProfileWindow::setCurrentProfile(Profile *profile){
@@ -260,13 +340,28 @@ void ProfileWindow::setCurrentProfile(Profile *profile){
 }
 
 void ProfileWindow::setCurrentProfile(int pos){
-    currentProfile = profileList.at(pos);
+    currentProfile = profileList->at(pos);
 
     profileNameLabel->setText(currentProfile->getLogin());
     QPixmap avadef(currentProfile->getAvatar());
     profileAvaLabel->setPixmap(avadef);
 }
 
+void ProfileWindow::updateAllProfilesSaveWays(){
+    int count = profileList->count();
+    for (int i =0; i<count; ++i){
+        profileList->at(i)->addToAllProfiles();
+    }
+}
+
+void ProfileWindow::setProfileSetupWindow(ProfileSetupWindow *window){
+    profileSetWin = window;
+    connect(profileSetWin, SIGNAL(profileAdded()), this, SLOT(onProfileAdded()));
+}
+
+void ProfileWindow::setProfileEditWindow(ProfileEditWindow *window){
+    profileEditWin = window;
+}
 void ProfileWindow::mouseReleaseEvent(QMouseEvent *event){
 
 }

@@ -13,6 +13,7 @@
 #include "exbutton.h"
 #include "groupexbuttons.h"
 #include "profilesetupwindow.h"
+#include "profileeditwindow.h"
 
 class ProfileWindow : public QFrame
 {
@@ -22,14 +23,21 @@ public:
     ~ProfileWindow();
     void StartHideAnim(int left, int top, int width, int height);
     void StartShowAnim(int left, int top, int width, int height);
-    void setProfileList(const QList <Profile*> list);
+    void setProfileList(QList <Profile*> *list);
+    void setProfileSaveWays(QList <QString*> *list);
     void setCurrentProfile(Profile *profile);
     void setCurrentProfile(int pos);
-
+    void updateAllProfilesSaveWays();
+    void setProfileSetupWindow (ProfileSetupWindow * window);
+    void setProfileEditWindow (ProfileEditWindow *window);
 
 signals:
     void hide_();
     void show_();
+    void profileAdded();
+    void profileDeleted();
+    void profileLogged(Profile * profile);
+    void profileLogout();
 
 public slots:
     void drawButton();
@@ -43,7 +51,8 @@ public slots:
     void backExButtonLeftClicked();
     void onNextProfileButttonClicked();
     void onPreviousProfileButtonClicked();
-
+    void onProfileAdded();
+    void setDefaultProfile();
 
 private:
     QPropertyAnimation * animation;
@@ -69,10 +78,20 @@ private:
     ExLabel *profileNameLabel;
     ExLabel *profileAvaLabel;
     QLineEdit * profilePasswordEdit;
-    ProfileSetupWindow * profileSetWin;
-    QList <Profile*> profileList;
+    QList <Profile*> *profileList;
+    QList <QString*> *profilesSaveWays;
     Profile *currentProfile;
-    int currentProfileNumber;
+    int currentProfileNumber;    
+    QLabel *errorMessageLabel;
+
+    ProfileSetupWindow * profileSetWin;
+    ProfileEditWindow *profileEditWin;
+
+    void initLayouts();
+    void setupProfileLayout();
+    void setupExButtons();
+    void setupNextPrevExButtons();
+    void deleteProfile();
 protected:
     void mouseReleaseEvent(QMouseEvent *event);
 };
