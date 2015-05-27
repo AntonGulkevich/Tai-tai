@@ -2,15 +2,20 @@
 #define ACCOUNT_H
 
 #include <QString>
-#include "domain.h"
 
 class Account
 {
 private:
     QString email;
     QString password;
-    Domain *domain;
-    QString domain_name;
+    QString pop3Host;
+    int pop3Port;
+
+    QString imapHost;
+    int imapPort;
+
+    QString smtpHost;
+    int smtpPort;
     enum state{
         good,
         bad,
@@ -21,18 +26,25 @@ public:
     Account();
     Account (const QString &_email,const QString &_password);
     ~Account();
-    QString getDomainName();
-    void setDomain(Domain* _domain);
-
     QString GetLogin();
     QString GetPassword();
 
     QString GetPop3Host();
     QString GetImapHost();
     QString GetSmtpHost();
-    int GetPop3PortEncr();
-    int GetImapPortEncr();
-    int GetSmtpPortEncr();
+    int GetPop3Port();
+    int GetImapPort();
+    int GetSmtpPort();
+
+    void setPop3Host(const QString &host);
+    void setImapHost(const QString &host);
+    void setSmtpHost(const QString &host);
+    void setPop3Port(int port);
+    void setImapPort(int port);
+    void setSmtpPort(int port);
+
+    friend QDataStream & operator <<(QDataStream & out, const Account& account);
+    friend QDataStream & operator >>(QDataStream & in, Account& account );
 
 };
 

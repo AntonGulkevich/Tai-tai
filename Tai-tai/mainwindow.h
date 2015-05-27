@@ -14,7 +14,8 @@
 #include "profileeditwindow.h"
 #include "exbutton.h"
 #include "trackwidget.h"
-
+#include "emaileditwindow.h"
+#include "addnewemailwindow.h"
 
 class MainWindow : public QFrame
 {
@@ -22,6 +23,7 @@ class MainWindow : public QFrame
 private:
     QPoint mpos;
     bool canMove;
+    int subWindows;
     QSize mainWindowStartSize;
     QSize mainWindowMinSize;
     QPoint mainWindownStartPoint;
@@ -50,11 +52,14 @@ private:
     ExButton * toHome;
     ExButton * findList;
     GroupExButtons * groupMenu;
-    /*colors*/
+    /*colors and styles*/
     QString mainBackGroudColor;
     QString additionBackGroundColor;
     QString overlayBackGroundColor;
-
+    QString groupBoxStyleSheet;
+    QString lineEditStyleSheet;
+    QString labelStyleSheet;
+    QString frameStyleSheet;
     /*overlay*/
     QWidget * overLay;
     TrackWidget *trackBar;
@@ -73,6 +78,8 @@ private:
     void initCentrallWidget();
     void initProfileSetupWindow();
     void initProfileEditWindow();
+    void initEmailEditWindow();
+    void initNewEmailWindow();
 
     /*profiles*/
     QList <Profile*> profileList;
@@ -83,6 +90,8 @@ private:
     ProfileWindow * MainProfileWindow;
     ProfileSetupWindow *profileSetupWindow;
     ProfileEditWindow *profileEditWindow;
+    EmailEditWindow *emailEditWindow;
+    AddNewEmailWindow *addNewEmailWindow;
 
 public:
     MainWindow(QWidget *parent = 0);
@@ -106,8 +115,10 @@ private slots:
     void updateProfiles();
     void loginProfile(Profile *profile);
     void logoutProfile();
-
+    void subwindowsOn();
+    void subwindowsOff();
     void onCloseButtonClicked();
+    void resizeOverlay();
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

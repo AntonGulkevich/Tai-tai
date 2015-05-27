@@ -5,6 +5,7 @@ ExButton::ExButton(QWidget *parent, const QString &caption, int r, bool subButto
 {
     Maxed = true;
     AnimationLocked = false;
+    onlyPicture =false;
     Radius = r;
     SmallRadius = r/2;
     countLiteralsShortCaption=1;
@@ -66,20 +67,20 @@ int ExButton::getCountLiteralsShortCaption(){
 }
 
 void ExButton::swapButtonsGeometry(ExButton *target){
-   QRect tempRect;
-   tempRect=geometry();
-   setGeometry(target->geometry());
-   target->setGeometry(tempRect);
+    QRect tempRect;
+    tempRect=geometry();
+    setGeometry(target->geometry());
+    target->setGeometry(tempRect);
 
-   bool tempSt;
-   tempSt=Maxed;
-   Maxed=target->Maxed;
-   target->Maxed=tempSt;
+    bool tempSt;
+    tempSt=Maxed;
+    Maxed=target->Maxed;
+    target->Maxed=tempSt;
 
-   QString tempSS;
-   tempSS=styleSheet();
-   setStyleSheet(target->styleSheet());
-   target->setStyleSheet(tempSS);
+    QString tempSS;
+    tempSS=styleSheet();
+    setStyleSheet(target->styleSheet());
+    target->setStyleSheet(tempSS);
 }
 
 void ExButton::setDefaultSS(){
@@ -152,6 +153,14 @@ void ExButton::setCaptionVisible(bool state){
 
 int ExButton::getRotation(){
     return rotation;
+}
+
+void ExButton::setOnlyPicture(bool mode){
+    onlyPicture= mode;
+}
+
+bool ExButton::isOnlyPicture(){
+    return onlyPicture;
 }
 
 bool ExButton::isMaximumSize(){
@@ -289,14 +298,15 @@ void ExButton::enterEvent(QEvent *event){
     if (isMaximumSize()){
         setStyleSheet(defaultSSBig+hoverSS);
         r=Radius;
-        QPropertyAnimation *animation = new QPropertyAnimation(imageLabel, "geometry");
-        animation->setEasingCurve(QEasingCurve::InOutQuad);
-        animation->setDuration(200);
-        animation->setEndValue(QRect(left+r/2,top+r/2, 0, 0 ));
-        animation->start(QPropertyAnimation::DeleteWhenStopped);
-
-        connect(animation, SIGNAL(finished()), captionExLabel,  SLOT(show()));
-        connect(animation, SIGNAL(finished()), imageLabel,      SLOT(hide()));
+        if (!onlyPicture){
+            QPropertyAnimation *animation = new QPropertyAnimation(imageLabel, "geometry");
+            animation->setEasingCurve(QEasingCurve::InOutQuad);
+            animation->setDuration(200);
+            animation->setEndValue(QRect(left+r/2,top+r/2, 0, 0 ));
+            animation->start(QPropertyAnimation::DeleteWhenStopped);
+            connect(animation, SIGNAL(finished()), captionExLabel,  SLOT(show()));
+            connect(animation, SIGNAL(finished()), imageLabel,      SLOT(hide()));
+        }
     }
     else{
         setStyleSheet(defaultSSSmall+hoverSS);
@@ -310,15 +320,17 @@ void ExButton::leaveEvent(QEvent *event){
     if (isMaximumSize()){
         setStyleSheet(defaultSSBig);
         r=Radius;
-        captionExLabel->setVisible(false);
-        imageLabel->setVisible(true);
+        if (!onlyPicture){
+            captionExLabel->setVisible(false);
+            imageLabel->setVisible(true);
 
-        QPropertyAnimation *animation = new QPropertyAnimation(imageLabel, "geometry");
-        animation->setEasingCurve(QEasingCurve::InOutQuad);
-        animation->setDuration(200);
-        animation->setStartValue(QRect(r/2,r/2, 0, 0 ));
-        animation->setEndValue(QRect(0,0, r, r ));
-        animation->start(QPropertyAnimation::DeleteWhenStopped);
+            QPropertyAnimation *animation = new QPropertyAnimation(imageLabel, "geometry");
+            animation->setEasingCurve(QEasingCurve::InOutQuad);
+            animation->setDuration(200);
+            animation->setStartValue(QRect(r/2,r/2, 0, 0 ));
+            animation->setEndValue(QRect(0,0, r, r ));
+            animation->start(QPropertyAnimation::DeleteWhenStopped);
+        }
     }
     else{
         setStyleSheet(defaultSSSmall);

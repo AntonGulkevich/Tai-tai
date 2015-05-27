@@ -30,13 +30,14 @@ public:
     void updateAllProfilesSaveWays();
     void setProfileSetupWindow (ProfileSetupWindow * window);
     void setProfileEditWindow (ProfileEditWindow *window);
-
+    void setEmailEditWindow(EmailEditWindow *window);
 signals:
     void hide_();
     void show_();
     void profileAdded();
     void profileDeleted();
     void profileLogged(Profile * profile);
+    void profileEditing(Profile * profile);
     void profileLogout();
 
 public slots:
@@ -53,6 +54,9 @@ public slots:
     void onPreviousProfileButtonClicked();
     void onProfileAdded();
     void setDefaultProfile();
+    void startEditProfile();
+    void setupLastProfile();
+    void addNewEmailLastProfile();
 
 private:
     QPropertyAnimation * animation;
@@ -86,14 +90,17 @@ private:
 
     ProfileSetupWindow * profileSetWin;
     ProfileEditWindow *profileEditWin;
+    EmailEditWindow *emailEditWindow;
 
     void initLayouts();
     void setupProfileLayout();
     void setupExButtons();
     void setupNextPrevExButtons();
     void deleteProfile();
+
 protected:
     void mouseReleaseEvent(QMouseEvent *event);
+
 };
 
 #endif // PROFILEWINDOW_H

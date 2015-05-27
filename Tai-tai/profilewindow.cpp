@@ -43,6 +43,7 @@ void ProfileWindow::StartShowAnim(int left, int top, int width, int height){
     animation->setEndValue(QRect(left, top, width, height));
 
     animation->start(QAbstractAnimation::DeleteWhenStopped);
+    groupEx->moveToPoints(150 - groupEx->getBigRadius()/2, botLay->geometry().top()+80);
     emit show_();
 }
 
@@ -57,10 +58,7 @@ void ProfileWindow::animatedHide(){
 }
 
 void ProfileWindow::loginExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(loginExButton)){
-        //  groupEx->setDefaultButton("Login");
-        groupEx->startAnimation();
-    }
+    groupEx->closeGroup();
     if (profilesSaveWays->isEmpty()){
         return;
     }
@@ -77,18 +75,12 @@ void ProfileWindow::loginExButtonLeftClicked(){
 }
 
 void ProfileWindow::createExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(createExButton)){
-        // groupEx->setDefaultButton("Create");
-        groupEx->startAnimation();
-    }
+    groupEx->closeGroup();
     profileSetWin->StartShowAnim(0, 0, width(), height());
 }
 
 void ProfileWindow::deleteExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(deleteExButton)){
-        //   groupEx->setDefaultButton("Delete");
-        groupEx->startAnimation();
-    }
+    groupEx->closeGroup();
     if (profilesSaveWays->isEmpty()){
         return;
     }
@@ -96,21 +88,15 @@ void ProfileWindow::deleteExButtonLeftClicked(){
 }
 
 void ProfileWindow::editExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(editExButton)){
-        //    groupEx->setDefaultButton("Edit");
-        groupEx->startAnimation();
-    }
+    groupEx->closeGroup();
     if (profilesSaveWays->isEmpty()){
         return;
     }
-    profileEditWin->StartShowAnim(0,0,width(), height());
+    startEditProfile();
 }
 
 void ProfileWindow::exitExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(exitExButton)){
-        //    groupEx->setDefaultButton("Logout");
-        groupEx->startAnimation();
-    }
+    groupEx->closeGroup();
     if (profilesSaveWays->isEmpty()){
         return;
     }
@@ -118,10 +104,7 @@ void ProfileWindow::exitExButtonLeftClicked(){
 }
 
 void ProfileWindow::backExButtonLeftClicked(){
-    if (!groupEx->isDefaultButton(backExButton)){
-        //    groupEx->setDefaultButton("Back");
-        groupEx->startAnimation();
-    }
+    groupEx->closeGroup();
     animatedHide();
 }
 
@@ -155,6 +138,33 @@ void ProfileWindow::setDefaultProfile(){
     profileNameLabel->setText("Default Profile");
 }
 
+void ProfileWindow::startEditProfile(){
+    QString password = profilePasswordEdit->text();
+    if (currentProfile->verification(password)){
+        emit profileEditing(currentProfile);
+        profileEditWin->StartShowAnim(0,0,width(), height());
+        profilePasswordEdit->setText("");
+    }
+    else{
+        errorMessageLabel->setText("Wrong password.");
+        errorMessageLabel->show();
+    }
+}
+
+void ProfileWindow::setupLastProfile(){
+    currentProfileNumber =profileList->count()-1;
+    setCurrentProfile(currentProfileNumber);
+    profileEditWin->setCurrentProfile(currentProfile);
+    profileEditWin->StartShowAnim(0, 0, 300, height());
+}
+
+void ProfileWindow::addNewEmailLastProfile(){
+    currentProfileNumber =profileList->count()-1;
+    setCurrentProfile(currentProfileNumber);
+    emailEditWindow->setCurrentProfile(currentProfile);
+    emailEditWindow->StartShowAnim(0, 0, 300, height());
+}
+
 void ProfileWindow::initLayouts(){
     bigLay = new QBoxLayout(QBoxLayout::TopToBottom, this);
     topLay = new QBoxLayout(QBoxLayout::TopToBottom);
@@ -177,7 +187,7 @@ void ProfileWindow::setupProfileLayout(){
     profileFrame->setLayout(profileLay);
 
     profileNameLabel = new ExLabel("DEFAULT PROFILE");
-
+    profileNameLabel->setStyleSheet("color: #436EEE");
     QFont fnt2;
     fnt2.setPixelSize(13);
     fnt2.setItalic(false);
@@ -233,7 +243,9 @@ void ProfileWindow::setupProfileLayout(){
     botLay->addStretch(1);
 
     connect(profilePasswordEdit, SIGNAL(textEdited(QString)), errorMessageLabel, SLOT(hide()));
-
+    connect(profileNameLabel, SIGNAL(clicked()), this , SLOT(startEditProfile()));
+    connect(profileAvaLabel, SIGNAL(clicked()), this, SLOT(loginExButtonLeftClicked()));
+    connect(profilePasswordEdit, SIGNAL(returnPressed()), this, SLOT(loginExButtonLeftClicked()));
 }
 
 void ProfileWindow::setupExButtons(){
@@ -249,22 +261,27 @@ void ProfileWindow::setupExButtons(){
     createExButton = new ExButton(this,  "Create", radius, 1);
     createExButton->setImage(":/resourses/icons/create_acc.png");
     createExButton->setImageMargin(margin);
+    createExButton->setToolTip("Create a new profile.");
 
     deleteExButton = new ExButton(this,  "Delete", radius, 1);
     deleteExButton->setImage(":/resourses/icons/delete_acc.png");
     deleteExButton->setImageMargin(margin);
+    deleteExButton->setToolTip("Delete selected profile.");
 
     editExButton = new ExButton(this,  "Edit", radius, 1);
     editExButton->setImage(":/resourses/icons/edit_acc.png");
     editExButton->setImageMargin(margin);
+    editExButton->setToolTip("Edit selected profile.");
 
     exitExButton = new ExButton(this,  "Logout", radius, 1);
     exitExButton->setImage(":/resourses/icons/login_acc.png");
     exitExButton->setImageMargin(margin);
+    exitExButton->setToolTip("Logout from selected profile.");
 
     backExButton = new ExButton(this,  "Back", radius, 1);
     backExButton->setImage(":/resourses/icons/back_nb.png");
     backExButton->setImageMargin(10);
+    backExButton->setToolTip("Close this window.");
 
     groupEx = new GroupExButtons();
 
@@ -357,13 +374,19 @@ void ProfileWindow::updateAllProfilesSaveWays(){
 void ProfileWindow::setProfileSetupWindow(ProfileSetupWindow *window){
     profileSetWin = window;
     connect(profileSetWin, SIGNAL(profileAdded()), this, SLOT(onProfileAdded()));
+    connect (profileSetWin, SIGNAL(setupLastProfile()), this, SLOT(setupLastProfile()));
+    connect (profileSetWin, SIGNAL(addEmailLastProfile()), this, SLOT(addNewEmailLastProfile()));
 }
 
 void ProfileWindow::setProfileEditWindow(ProfileEditWindow *window){
     profileEditWin = window;
 }
-void ProfileWindow::mouseReleaseEvent(QMouseEvent *event){
 
+void ProfileWindow::setEmailEditWindow(EmailEditWindow *window){
+    emailEditWindow=window;
+}
+void ProfileWindow::mouseReleaseEvent(QMouseEvent *event){
+    errorMessageLabel->setVisible(false);
 }
 
 void ProfileWindow::StartHideAnim(int left, int top, int width, int height){

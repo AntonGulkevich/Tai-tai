@@ -34,6 +34,9 @@ public:
     void setRotation(int degree); //set degress of rotaion(clockwise)
     int getRotation(); //get degress of rotaion(clockwise)
 
+    void setOnlyPicture(bool mode);
+    bool isOnlyPicture();
+
     bool isMaximumSize(); // return state of button
     bool IsAnimationBlocked(); // return state if locked if not
 
@@ -71,12 +74,13 @@ private:
     int Radius; // button's radius in normal size
     int SmallRadius; //button's radius in small size
     bool Maxed; // true if button's size is normal
-    bool AnimationLocked; // true is animation is locked
+    bool AnimationLocked; // true if animation is locked
+    bool onlyPicture;//disable caption of label shows only its picture
     int rotation; // the rotation
     int countLiteralsShortCaption; // oblivious
     QBoxLayout *mainLay; // main layout
     QLabel *captionExLabel;// label with shows button's caption
-    QLabel *imageLabel; // label with contains and show buttons' image
+    QLabel *imageLabel; // label witch contains and show button's image
 
     QString hoverSS;// style sheet parameter in hover mod
 

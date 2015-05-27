@@ -189,6 +189,10 @@ void ProfileSetupWindow::addNewProfile(){
     emit profileAdded();
 }
 
+void ProfileSetupWindow::setEmailEditWindow(EmailEditWindow *window){
+    emailEditWindow= window;
+}
+
 void ProfileSetupWindow::onCancelExButtonclicked(){
     animatedHide();
 
@@ -211,7 +215,7 @@ void ProfileSetupWindow::onAvatarCliked(){
     }
 }
 
-void ProfileSetupWindow::onSaveAndContinueExButtonClicked(){
+bool ProfileSetupWindow::onSaveAndContinueExButtonClicked(){
     QString login;
     QString password1;
     QString password2;
@@ -240,23 +244,26 @@ void ProfileSetupWindow::onSaveAndContinueExButtonClicked(){
         isCorrectLineEdit(profilePasswordSecondLE);
         errorMessage->setText("Different passwords.");
         errorMessage->show();
-        return;
+        return false;
     }
     if (!correctInput){
         errorMessage->setText("All fields must be filled.");
         errorMessage->show();
-        return;
+        return false;
     }
     errorMessage->hide();
     addNewProfile();
+    return true;
 }
 
 void ProfileSetupWindow::onExtendedSetupExButtonClicked(){
-
+    if (onSaveAndContinueExButtonClicked())
+        emit setupLastProfile();
 }
 
 void ProfileSetupWindow::onAddEmailExButtonClicked(){
-
+    if (onSaveAndContinueExButtonClicked())
+        emit addEmailLastProfile();
 }
 
 void ProfileSetupWindow::clearAllContent(){
@@ -269,6 +276,10 @@ void ProfileSetupWindow::clearAllContent(){
     profilePasswordSecondLE->clear();
     QPixmap avadef(":/resourses/icons/ava_def.jpg");
     profileAvaLabel->setPixmap(avadef);
+}
+
+void ProfileSetupWindow::setCurrentProfile(Profile *profile){
+    currentProfile = profile;
 }
 
 void ProfileSetupWindow::createTempProfile(){

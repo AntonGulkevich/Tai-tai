@@ -15,6 +15,7 @@
 #include "exlabel.h"
 #include "groupexbuttons.h"
 #include "profile.h"
+#include "emaileditwindow.h"
 
 class ProfileEditWindow : public QFrame
 {
@@ -24,6 +25,7 @@ public:
     void StartHideAnim();
     void StartShowAnim(int left, int top, int width, int height);
     bool isCorrectLineEdit(QLineEdit *lineEdit);
+    void setEmailEditWindow(EmailEditWindow *window);
 private:
     QBoxLayout *mainLay;
     QBoxLayout *passwordLay;
@@ -51,6 +53,7 @@ private:
     ExButton *defaultEB;
     ExButton *approveEB;
     GroupExButtons *controllGroup;
+    ExLabel *emailsEL;
 
     void initPasswordLay();
     void initSettingsGuiLay();
@@ -58,6 +61,8 @@ private:
     void initCaptionLay();
     void initExButtons();
 
+    Profile * currentProfile;
+    EmailEditWindow *emailEditWindow;
 
 signals:
     void hide_();
@@ -69,6 +74,8 @@ public slots:
     void onBackEBClicked();
     void onDefaultEBClicked();
     void onApproveEBClicked();
+    void onEmailELClicked();
+    void setCurrentProfile(Profile *profile);
 
 };
 

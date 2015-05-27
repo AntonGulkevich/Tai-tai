@@ -5,7 +5,7 @@
 Account::Account(const QString &_email, const QString &_password) :
     email(_email), password (_password)
 {
-    domain_name=email.right(email.length()-email.indexOf("@")-1);
+    //domain_name=email.right(email.length()-email.indexOf("@")-1);
     //domain_name=domain_name.left(domain_name.length()-domain_name.indexOf(".")+1);
 }
 Account::~Account(){
@@ -13,13 +13,6 @@ Account::~Account(){
 }
 Account::Account(){
 
-}
-
-QString Account::getDomainName(){
-    return domain_name;
-}
-void Account::setDomain(Domain *_domain){
-    domain= _domain;
 }
 QString Account::GetLogin(){
     return email;
@@ -29,27 +22,76 @@ QString Account::GetPassword(){
     return password;
 }
 QString Account::GetPop3Host(){
-    return domain->GetPop3Host();
+    return pop3Host;
 }
 
 QString Account::GetImapHost(){
-    return domain->GetImapHost();
+    return imapHost;
 }
 
 QString Account::GetSmtpHost(){
-    return domain->GetSmtpHost();
+    return smtpHost;
 }
 
-int Account::GetPop3PortEncr(){
-    return domain->GetPop3PortEncr();
+int Account::GetPop3Port(){
+    return pop3Port;
 }
 
-int Account::GetImapPortEncr(){
-    return domain->GetImapPortEncr();
+int Account::GetImapPort(){
+    return imapPort;
 }
 
-int Account::GetSmtpPortEncr(){
-    return domain->GetSmtpPortEncr();
+int Account::GetSmtpPort(){
+    return smtpPort;
+}
+
+void Account::setPop3Host(const QString &host){
+    pop3Host=host;
+}
+
+void Account::setImapHost(const QString &host){
+    imapHost=host;
+}
+
+void Account::setSmtpHost(const QString &host){
+    smtpHost=host;
+}
+
+void Account::setPop3Port(int port){
+    pop3Port= port;
+}
+
+void Account::setImapPort(int port){
+    imapPort=port;
+}
+
+void Account::setSmtpPort(int port){
+    smtpPort=port;
+}
+QDataStream & operator<<(QDataStream & out, const Account& account)
+{
+    out << account.email
+        << account.password
+        << account.pop3Host
+        << account.pop3Port
+        << account.imapHost
+        << account.imapPort
+        << account.smtpHost
+        << account.smtpPort;
+
+    return out;
+}
+QDataStream & operator >>(QDataStream & in, Account& account ){
+    in  >> account.email
+        >> account.password
+        >> account.pop3Host
+        >> account.pop3Port
+        >> account.imapHost
+        >> account.imapPort
+        >> account.smtpHost
+        >> account.smtpPort;
+
+    return in;
 }
 
 

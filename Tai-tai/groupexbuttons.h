@@ -21,7 +21,7 @@ public:
     ExButton *takeAt(int pos);
     ExButton *takeAt(const QString & caption);
     bool isDefaultButton(ExButton * button);
-    void moveToPoints(int leftPoint, int rightPoint);
+    void moveToPoints(int leftPoint, int topPoint);
     void hideGroup();
     void showGroup();
     void raiseToTop();

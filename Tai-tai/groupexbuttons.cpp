@@ -216,11 +216,11 @@ bool GroupExButtons::isDefaultButton(ExButton *button){
         return false;
 }
 
-void GroupExButtons::moveToPoints(int leftPoint, int rightPoint){
-    defaultButton->move(leftPoint, rightPoint);
+void GroupExButtons::moveToPoints(int leftPoint, int topPoint){
+    defaultButton->move(leftPoint, topPoint);
     int count = subButtons.count();
     for(int i =0;i<count;++i){
-        subButtons[i]->move(leftPoint, rightPoint);
+        subButtons[i]->move(leftPoint, topPoint);
     }
 
 }

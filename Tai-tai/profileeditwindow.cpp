@@ -23,6 +23,7 @@ void ProfileEditWindow::StartShowAnim(int left, int top, int width, int height){
     animation->setStartValue(QRect(left, top, 0, height));
     animation->setEndValue(QRect(left, top, width, height));
     animation->start(QAbstractAnimation::DeleteWhenStopped);
+    controllGroup->moveToPoints(150 - controllGroup->getBigRadius()/2, buttonsLay->geometry().top()+80);
     emit show_();
 }
 
@@ -49,6 +50,10 @@ bool ProfileEditWindow::isCorrectLineEdit(QLineEdit *lineEdit){
         lineEdit->setStyleSheet("");
         return true;
     }
+}
+
+void ProfileEditWindow::setEmailEditWindow(EmailEditWindow *window){
+    emailEditWindow = window;
 }
 
 void ProfileEditWindow::initLayouts(){
@@ -98,7 +103,8 @@ void ProfileEditWindow::initPasswordLay(){
                               QGroupBox{margin-top: 5px;} \
                               QGroupBox::title {subcontrol-origin: margin; \
                                                 subcontrol-position: top left;\
-                                                left:10 px;bottom:2px}");
+                                                left:10 px;bottom:2px}\
+                              QGroupBox::title {color: #8B6969}");
     QGridLayout *passwordInnerLay = new QGridLayout;
     passwordLay->addWidget(passwordGB, 0);
     passwordInnerLay->setSpacing(spacing);
@@ -133,7 +139,8 @@ void ProfileEditWindow::initSettingsGuiLay(){
                                 QGroupBox::title {subcontrol-origin: margin; \
                                                   subcontrol-position: top left;\
                                                   left:10 px; bottom:2px}\
-                                QCheckBox{border: 0px}");
+                                QCheckBox{border: 0px}\
+                                QGroupBox::title {color: #8B6969}");
     QGridLayout *settingsGuiInnerLay = new QGridLayout;
     settingsGUILay->addWidget(settingsGB, 0);
 
@@ -152,17 +159,18 @@ void ProfileEditWindow::initSettingsGuiLay(){
 }
 
 void ProfileEditWindow::initEmailslay(){
-    int margin = 5;
-    int spacing = 5;
+    int margin = 10;
+    int spacing = 10;
     QGroupBox *emailGB = new QGroupBox("Emails");
     emailGB->setStyleSheet("QLabel {border:0px} \
                                 QGroupBox{margin-top: 5px;} \
                                 QGroupBox::title {subcontrol-origin: margin; \
                                                   subcontrol-position: top left;\
                                                   left:10 px; bottom:2px}\
-                                QCheckBox{border: 0px;}");
+                                QCheckBox{border: 0px;}\
+                                QGroupBox::title {color: #8B6969}");
     emailLay->addWidget(emailGB);
-
+    /*
     QScrollArea *scrollArea = new QScrollArea(emailGB);
     emailGB->setMinimumHeight(110);
     scrollArea->setStyleSheet("QScrollArea{margin-top:15px;margin-left:5 px; border: 0px}\
@@ -177,14 +185,22 @@ void ProfileEditWindow::initEmailslay(){
     scrollLayout->setSpacing(spacing);
     scrollLayout->setMargin(margin);
 
-    /*
+
     for (int j=0; j<100; j++)
     {
         scrollLayout->addWidget(new QLabel("This is a test"));  // adding your widgets to scrolllayout
     }
-    */
-    scrollArea->setWidget(scrollWidget);
 
+    scrollArea->setWidget(scrollWidget);
+    */
+    QVBoxLayout *emailInnerLay = new QVBoxLayout(emailGB);
+    emailInnerLay->setMargin(margin);
+    emailInnerLay->setSpacing(spacing);
+    emailsEL = new ExLabel("Manage emails accounts.");
+    emailsEL->setFonts(11, 11, 11);
+    emailsEL->setStyleSheet("color: #436EEE");
+    emailInnerLay->addWidget(emailsEL);
+    connect(emailsEL, SIGNAL(clicked()), this, SLOT(onEmailELClicked()));
     buttonsLay->addStretch(1);
 }
 
@@ -258,7 +274,7 @@ void ProfileEditWindow::onSaveAndExitEBClicked(){
 }
 
 void ProfileEditWindow::onBackEBClicked(){
-
+   StartHideAnim();
 }
 
 void ProfileEditWindow::onDefaultEBClicked(){
@@ -267,4 +283,17 @@ void ProfileEditWindow::onDefaultEBClicked(){
 
 void ProfileEditWindow::onApproveEBClicked(){
 
+}
+
+void ProfileEditWindow::onEmailELClicked(){
+    emailEditWindow->setCurrentProfile(currentProfile);
+    emailEditWindow->StartShowAnim(0, 0,  300, height());
+
+}
+
+void ProfileEditWindow::setCurrentProfile(Profile *profile){
+    currentProfile = profile;
+    windowCaptionLabel->setText("Edit profile: "+ currentProfile->getLogin());
+    dinamicGUICB->setChecked(currentProfile->getDGuiMode());
+    stopStatCB->setChecked(currentProfile->getStatisticMode());
 }

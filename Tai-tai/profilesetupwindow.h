@@ -13,6 +13,7 @@
 #include "exbutton.h"
 #include "groupexbuttons.h"
 #include "profile.h"
+#include "emaileditwindow.h"
 
 class ProfileSetupWindow : public QFrame
 {
@@ -23,10 +24,13 @@ public:
     void StartShowAnim(int left, int top, int width, int height);
     bool isCorrectLineEdit(QLineEdit *lineEdit);
     void addNewProfile();
+    void setEmailEditWindow(EmailEditWindow *window);
 signals:
     void hide_();
     void show_();
     void profileAdded();
+    void setupLastProfile();
+    void addEmailLastProfile();
 
 private:
     QPropertyAnimation * animation;
@@ -54,15 +58,18 @@ private:
 
     QString defaultAva;
 
+    EmailEditWindow *emailEditWindow;
+
 
 public slots:
     void animatedHide();
     void onAvatarCliked();
     void onCancelExButtonclicked();
-    void onSaveAndContinueExButtonClicked();
+    bool onSaveAndContinueExButtonClicked();
     void onExtendedSetupExButtonClicked();
     void onAddEmailExButtonClicked();
     void clearAllContent();
+    void setCurrentProfile(Profile *profile);
 
 private slots:
     void createTempProfile();

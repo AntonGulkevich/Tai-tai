@@ -20,7 +20,6 @@ SOURCES += main.cpp\
     profile.cpp \
     profilesetupwindow.cpp \
     account.cpp \
-    domain.cpp \
     baseimap.cpp \
     smtp.cpp \
     message.cpp \
@@ -32,7 +31,8 @@ SOURCES += main.cpp\
     pop3.cpp \
     trackwidget.cpp \
     profileeditwindow.cpp \
-    emaileditwindow.cpp
+    emaileditwindow.cpp \
+    addnewemailwindow.cpp
 
 HEADERS  += mainwindow.h \
     profilewindow.h \
@@ -42,7 +42,6 @@ HEADERS  += mainwindow.h \
     profile.h \
     profilesetupwindow.h \
     account.h \
-    domain.h \
     basepop3.h \
     baseimap.h \
     imap.h \
@@ -54,7 +53,8 @@ HEADERS  += mainwindow.h \
     threadpop3.h \
     trackwidget.h \
     profileeditwindow.h \
-    emaileditwindow.h
+    emaileditwindow.h \
+    addnewemailwindow.h
 
 RESOURCES += \
     icons.qrc

@@ -3,6 +3,8 @@
 Profile::Profile(){
     saveWay= "C:\\Users\\Mera\\Documents\\GitHub\\Tai-tai\\Accounts\\";
     allProfilesSaveWay = "C:\\Users\\Mera\\Documents\\GitHub\\Tai-tai\\Accounts\\AllProfiles.txt";
+    dGuiMode =true;
+    statisticMode =true;
 }
 
 void Profile::setLogin(const QString &login_){
@@ -21,6 +23,14 @@ void Profile::setAvatar(const QString &ava){
     avatar=ava;
 }
 
+void Profile::setDGuiMode(bool mode){
+    dGuiMode=mode;
+}
+
+void Profile::setStatisticMode(bool mode){
+    statisticMode = mode;
+}
+
 QString Profile::getAvatar(){
     return avatar;
 }
@@ -30,7 +40,7 @@ QString Profile::getLogin(){
 }
 
 int Profile::getEmailCount(){
-    return emailCount;
+    return accountList.count();
 }
 
 QString Profile::getSaveWay(){
@@ -39,6 +49,18 @@ QString Profile::getSaveWay(){
 
 QString Profile::getAllProfilesSaveWay(){
     return allProfilesSaveWay;
+}
+
+bool Profile::getDGuiMode(){
+    return dGuiMode;
+}
+
+bool Profile::getStatisticMode(){
+    return statisticMode;
+}
+
+Account *Profile::getAccount(int pos){
+    return accountList.at(pos);
 }
 
 bool Profile::verification(const QString &password){
@@ -62,8 +84,29 @@ bool Profile::saveprofile(){
     return true;
 }
 
-bool Profile::addNewEmail(const QString &loginEmail, const QString &passEmail){
+bool Profile::addNewEmail(Account *account){
+    QString accountLogin;
+    accountLogin =account->GetLogin();
+    QListIterator <Account*> listIter(accountList);
+    while(listIter.hasNext()){
+        if (listIter.next()->GetLogin()==accountLogin)
+            return false;//login is not unic
+    }
+    accountList.append(account);
     return true;// is new email is correct and unic
+}
+
+bool Profile::deleteEmail(Account *account){
+    QString accountLogin;
+    accountLogin =account->GetLogin();
+    QList<Account*>::iterator it = accountList.begin();
+    while (it != accountList.end()) {
+      if ((*it)->GetLogin()==accountLogin){
+          accountList.erase(it);
+          return true;
+      }
+    }
+    return false;
 }
 
 bool Profile::addToAllProfiles(){
@@ -80,14 +123,34 @@ bool Profile::addToAllProfiles(){
 }
 
 QDataStream & operator<<(QDataStream & out, const Profile& profile_){
-    out <<profile_.login<<profile_.passwordText<<profile_.avatar;
+    int count;
+    count = profile_.accountList.count();
+
+    out<<profile_.login
+       <<profile_.passwordText
+       <<profile_.avatar
+       <<profile_.statisticMode
+       <<profile_.dGuiMode
+       <<count;
+    while(count--){
+        out<<*(profile_.accountList.at(count));
+    }
 
     return out;
 }
 QDataStream & operator >>(QDataStream & in, Profile& profile_ ){
-    in >>profile_.login>>profile_.passwordText>>profile_.avatar;
-
+    int count;
+    Account *tempAccount;
+    in>>profile_.login
+      >>profile_.passwordText
+      >>profile_.avatar
+      >>profile_.statisticMode
+      >>profile_.dGuiMode
+      >>count;
+    while(count--){
+        tempAccount = new Account();
+        in>>*tempAccount;
+        profile_.accountList.append(tempAccount);
+    }
     return in;
-
-
 }
