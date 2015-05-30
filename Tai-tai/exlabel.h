@@ -32,6 +32,9 @@ public:
     void setUnselectedFontSize(int size);
 
     void setFonts(int act , int sel, int uns);
+    void setDinamicSS(bool mode);
+    bool isDinamicSS();
+
 signals:
     void clicked();
     void mouseEntered();
@@ -46,12 +49,12 @@ protected:
     virtual void leaveEvent(QEvent * event);
     virtual void enterEvent(QEvent *event);
 
-
 private:
     QFont *selectedFont;
     QFont *unselectedFont;
     QFont *activeFont;
     bool active;
+    bool dinamicSS;
     QPoint pos;
     QString activeStyleSheet;
     QString inActiveStyleSheet;

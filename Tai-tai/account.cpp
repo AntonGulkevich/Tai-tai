@@ -7,9 +7,11 @@ Account::Account(const QString &_email, const QString &_password) :
 {
     //domain_name=email.right(email.length()-email.indexOf("@")-1);
     //domain_name=domain_name.left(domain_name.length()-domain_name.indexOf(".")+1);
+    enable = true;
+
 }
 Account::~Account(){
-
+    enable = true;
 }
 Account::Account(){
 
@@ -45,6 +47,10 @@ int Account::GetSmtpPort(){
     return smtpPort;
 }
 
+bool Account::enabled(){
+    return enable;
+}
+
 void Account::setPop3Host(const QString &host){
     pop3Host=host;
 }
@@ -68,6 +74,10 @@ void Account::setImapPort(int port){
 void Account::setSmtpPort(int port){
     smtpPort=port;
 }
+
+void Account::setEnabled(bool mode){
+    enable=mode;
+}
 QDataStream & operator<<(QDataStream & out, const Account& account)
 {
     out << account.email
@@ -77,7 +87,8 @@ QDataStream & operator<<(QDataStream & out, const Account& account)
         << account.imapHost
         << account.imapPort
         << account.smtpHost
-        << account.smtpPort;
+        << account.smtpPort
+        << account.enable;
 
     return out;
 }
@@ -89,7 +100,8 @@ QDataStream & operator >>(QDataStream & in, Account& account ){
         >> account.imapHost
         >> account.imapPort
         >> account.smtpHost
-        >> account.smtpPort;
+        >> account.smtpPort
+        >> account.enable;
 
     return in;
 }

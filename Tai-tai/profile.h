@@ -19,6 +19,7 @@ public:
     bool saveprofile();
     bool addNewEmail(Account *account);
     bool deleteEmail(Account *account);
+    bool deleteEmail(int pos);
     bool addToAllProfiles();
     /*set*/
     void setLogin(const QString &login_);
@@ -39,6 +40,7 @@ public:
     /*inner*/
     friend QDataStream & operator <<(QDataStream & out, const Profile& profile_);
     friend QDataStream & operator >>(QDataStream & in, Profile& profile_ );
+    Profile &operator=(const Profile& right);
 
 private:
     /*parametrs*/

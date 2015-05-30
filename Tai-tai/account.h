@@ -10,12 +10,11 @@ private:
     QString password;
     QString pop3Host;
     int pop3Port;
-
     QString imapHost;
     int imapPort;
-
     QString smtpHost;
     int smtpPort;
+    bool enable;
     enum state{
         good,
         bad,
@@ -35,6 +34,7 @@ public:
     int GetPop3Port();
     int GetImapPort();
     int GetSmtpPort();
+    bool enabled();
 
     void setPop3Host(const QString &host);
     void setImapHost(const QString &host);
@@ -42,6 +42,7 @@ public:
     void setPop3Port(int port);
     void setImapPort(int port);
     void setSmtpPort(int port);
+    void setEnabled(bool mode);
 
     friend QDataStream & operator <<(QDataStream & out, const Account& account);
     friend QDataStream & operator >>(QDataStream & in, Account& account );

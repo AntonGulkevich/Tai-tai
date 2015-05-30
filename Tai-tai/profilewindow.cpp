@@ -29,7 +29,6 @@ ProfileWindow::ProfileWindow(QWidget *parent) :
     profileHorLay->addWidget(nextProfileButtton, 0, Qt::AlignLeft);
     profileHorLay->setMargin(0);
     profileHorLay->setSpacing(0);
-
     hide();
 }
 ProfileWindow::~ProfileWindow(){
@@ -37,13 +36,13 @@ ProfileWindow::~ProfileWindow(){
 }
 void ProfileWindow::StartShowAnim(int left, int top, int width, int height){
     show();
+    raise();
     animation = new QPropertyAnimation(this, "geometry");
     animation->setDuration(300);
     animation->setStartValue(QRect(left, top, 0, height));
     animation->setEndValue(QRect(left, top, width, height));
-
     animation->start(QAbstractAnimation::DeleteWhenStopped);
-    groupEx->moveToPoints(150 - groupEx->getBigRadius()/2, botLay->geometry().top()+80);
+    groupEx->moveToPoints(150 - groupEx->getBigRadius()/2, botLay->geometry().top()+70);
     emit show_();
 }
 
@@ -54,7 +53,10 @@ void ProfileWindow::drawButton(){
 
 void ProfileWindow::animatedHide(){
     StartHideAnim(0, 0, width(), height());
-    emit hide_();
+}
+
+void ProfileWindow::animatedShow(){
+    StartShowAnim(0, 0, 300, parentWidget()->height());
 }
 
 void ProfileWindow::loginExButtonLeftClicked(){
@@ -69,8 +71,7 @@ void ProfileWindow::loginExButtonLeftClicked(){
         animatedHide();
     }
     else{
-        errorMessageLabel->setText("Wrong password.");
-        errorMessageLabel->show();
+        showErrorMessageInLineEdit(profilePasswordEdit, "Wrong password");
     }
 }
 
@@ -141,15 +142,18 @@ void ProfileWindow::setDefaultProfile(){
 void ProfileWindow::startEditProfile(){
     QString password = profilePasswordEdit->text();
     if (currentProfile->verification(password)){
+        profileLogout();
+        profileLogged(currentProfile);
         emit profileEditing(currentProfile);
         profileEditWin->StartShowAnim(0,0,width(), height());
         profilePasswordEdit->setText("");
     }
     else{
-        errorMessageLabel->setText("Wrong password.");
-        errorMessageLabel->show();
+        showErrorMessageInLineEdit(profilePasswordEdit, "Wrong password");
     }
 }
+
+
 
 void ProfileWindow::setupLastProfile(){
     currentProfileNumber =profileList->count()-1;
@@ -163,6 +167,13 @@ void ProfileWindow::addNewEmailLastProfile(){
     setCurrentProfile(currentProfileNumber);
     emailEditWindow->setCurrentProfile(currentProfile);
     emailEditWindow->StartShowAnim(0, 0, 300, height());
+}
+
+void ProfileWindow::setDefaultsLineEdit(){
+    profilePasswordEdit->setEchoMode(QLineEdit::Password);
+    profilePasswordEdit->setStyleSheet("border: 0px");
+    profilePasswordEdit->setText("");
+    disconnect(profilePasswordEdit, SIGNAL(textEdited(QString)), this, SLOT(setDefaultsLineEdit()));
 }
 
 void ProfileWindow::initLayouts(){
@@ -183,7 +194,7 @@ void ProfileWindow::setupProfileLayout(){
     profileLay= new QBoxLayout(QBoxLayout::TopToBottom);
     profileLay->setMargin(1);
     profileLay->setSpacing(0);
-    profileFrame->setStyleSheet("QWidget {border: 1px solid black}");
+    profileFrame->setStyleSheet("QWidget {border: 1px solid lightgrey}");
     profileFrame->setLayout(profileLay);
 
     profileNameLabel = new ExLabel("DEFAULT PROFILE");
@@ -198,22 +209,29 @@ void ProfileWindow::setupProfileLayout(){
     profileNameLabel->setFonts(14, 13, 13);
 
     profileAvaLabel = new ExLabel("AVA");
+    QString actSS, inActSS;
+    actSS="QLabel{ border: 1px solid gray; \
+            border-top: 1px solid gray;\
+            border-bottom: 1px solid gray;}";
+    inActSS ="QLabel{ border: 0px solid gray; \
+            border-top: 1px solid lightgray;\
+            border-bottom: 1px solid lightgray;}";
+    profileAvaLabel->setStyleSheet(inActSS);
+    profileAvaLabel->setActiveStyleSheet(actSS);
+    profileAvaLabel->setInActiveStyleSheet(inActSS);
 
     profilePasswordEdit = new QLineEdit();
-    profilePasswordEdit->setStyleSheet("border: 0 px");
+    profilePasswordEdit->setStyleSheet("border: 0px");
     profilePasswordEdit->setEchoMode(QLineEdit::Password);
     profilePasswordEdit->setPlaceholderText("Password");
-
-    profileAvaLabel->setStyleSheet("QLabel{border: 1px solid gray;}");
 
     profileNameLabel->setMaximumSize(200, 20);
     profilePasswordEdit->setFixedSize(200, 20);
 
-    profileAvaLabel->setMaximumSize(200, 220);
+    profileAvaLabel->setFixedSize(200, 220);
     QPixmap avadef(":/resourses/icons/ava_def.jpg");
     profileAvaLabel->setPixmap(avadef);
-    // profileAvaLabel->setMask(avadef.mask());
-
+    profileAvaLabel->setScaledContents(true);
 
     QWidget *labelNameBack = new QWidget();
     labelNameBack->setStyleSheet("background-color:rgba(250, 250, 250); border: 0px");
@@ -225,24 +243,16 @@ void ProfileWindow::setupProfileLayout(){
     profileLay->addWidget(labelNameBack);
     profileLay->addWidget(profileAvaLabel, 1, Qt::AlignHCenter);
     profileLay->addWidget(profilePasswordEdit, 0, Qt::AlignHCenter);
-    profileFrame->setMaximumSize(profileNameLabel->width()+2,
-                                 profileNameLabel->height()+profileAvaLabel->height()+profilePasswordEdit->height()+2);
-
-    errorMessageLabel = new QLabel();
-    errorMessageLabel->setStyleSheet("color:red; border: 0px");
-    errorMessageLabel->hide();
-
+    profileFrame->setFixedSize(profileNameLabel->width()+2,
+                                 profileNameLabel->height()+profileAvaLabel->height()+profilePasswordEdit->height()+20);
     topLay->addStretch(1);
     topLay->addWidget(profileFrame, 1,  Qt::AlignHCenter);
-    topLay->addWidget(errorMessageLabel);
     topLay->addStretch(1);
 
     topLay->setSpacing(0);
     topLay->setMargin(10);
 
     botLay->addStretch(1);
-
-    connect(profilePasswordEdit, SIGNAL(textEdited(QString)), errorMessageLabel, SLOT(hide()));
     connect(profileNameLabel, SIGNAL(clicked()), this , SLOT(startEditProfile()));
     connect(profileAvaLabel, SIGNAL(clicked()), this, SLOT(loginExButtonLeftClicked()));
     connect(profilePasswordEdit, SIGNAL(returnPressed()), this, SLOT(loginExButtonLeftClicked()));
@@ -323,6 +333,11 @@ void ProfileWindow::setupNextPrevExButtons(){
 
 void ProfileWindow::deleteProfile(){
     setCurrentProfile(currentProfileNumber);
+    QString password = profilePasswordEdit->text();
+    if (!currentProfile->verification(password)){
+        showErrorMessageInLineEdit(profilePasswordEdit, "Wrong password");
+        return;
+    }
     QFile::remove(currentProfile->getSaveWay());
     QFile::resize(currentProfile->getAllProfilesSaveWay(), 0);
 
@@ -334,8 +349,15 @@ void ProfileWindow::deleteProfile(){
     if(profileList->isEmpty()){
         setDefaultProfile();
     }
-
+    profilePasswordEdit->setText("");
     emit profileDeleted();
+}
+
+void ProfileWindow::showErrorMessageInLineEdit(QLineEdit *le, const QString &messsage){
+    le->setText(messsage);
+    le->setEchoMode(QLineEdit::Normal);
+    le->setStyleSheet("border:0px; color: red");
+    connect (le, SIGNAL(textEdited(QString)), this, SLOT(setDefaultsLineEdit()));
 }
 
 void ProfileWindow::setProfileList(QList <Profile*> *list){
@@ -386,7 +408,6 @@ void ProfileWindow::setEmailEditWindow(EmailEditWindow *window){
     emailEditWindow=window;
 }
 void ProfileWindow::mouseReleaseEvent(QMouseEvent *event){
-    errorMessageLabel->setVisible(false);
 }
 
 void ProfileWindow::StartHideAnim(int left, int top, int width, int height){
@@ -397,7 +418,7 @@ void ProfileWindow::StartHideAnim(int left, int top, int width, int height){
     animation->setEndValue(QRect(left, top, 1, height));
 
     animation->start(QAbstractAnimation::DeleteWhenStopped);
-    connect (animation, SIGNAL(finished()), this, SLOT(hide()));
+    connect (animation, SIGNAL(finished()), this, SLOT(close()));
     groupEx->closeGroup();
     emit hide_();
 }

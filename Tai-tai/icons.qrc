@@ -85,6 +85,8 @@
         <file>../resourses/icons/restore_nb.png</file>
         <file>../resourses/icons/add_nb.png</file>
         <file>../resourses/icons/emailCheck_nb.png</file>
+        <file>../resourses/icons/back.png</file>
+        <file>../resourses/icons/dropDown.png</file>
     </qresource>
     <qresource prefix="/../resourses/icons"/>
     <qresource prefix="/resourses/icons"/>

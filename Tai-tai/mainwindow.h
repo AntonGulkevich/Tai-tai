@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include <QGraphicsOpacityEffect>
 #include <QScrollArea>
+#include <QComboBox>
 
 #include "profilewindow.h"
 #include "profilesetupwindow.h"
@@ -16,6 +17,9 @@
 #include "trackwidget.h"
 #include "emaileditwindow.h"
 #include "addnewemailwindow.h"
+#include "directwindow.h"
+#include "account.h"
+
 
 class MainWindow : public QFrame
 {
@@ -29,28 +33,28 @@ private:
     QPoint mainWindownStartPoint;
 
     /*layouts*/
-    QBoxLayout * mainLay;
-    QBoxLayout * topControllLay;
-    QBoxLayout * centrallLay;
+    QBoxLayout *mainLay;
+    QBoxLayout *topControllLay;
+    QBoxLayout *centrallLay;
 
     /*exbuttons of top lay*/
-    ExButton * settingsGenegal;
-    ExButton * closeProgramm;
-    ExButton * hideToTray;
-    ExButton * expandToWindow;
-    ExButton * collapseToWindow;
+    ExButton *settingsGenegal;
+    ExButton *closeProgramm;
+    ExButton *hideToTray;
+    ExButton *expandToWindow;
+    ExButton *collapseToWindow;
     /*exlabels of top lay*/
-    ExLabel * profileNameExLabel;
+    ExLabel *profileNameExLabel;
 
     /*exbuttos of menu*/
-    ExButton * writeNewMail;
-    ExButton * refreshMail;
-    ExButton * deleteMail;
-    ExButton * saveMail;
-    ExButton * selectAllAsReaded;
-    ExButton * contactList;
-    ExButton * toHome;
-    ExButton * findList;
+    ExButton *writeNewMail;
+    ExButton *refreshMail;
+    ExButton *deleteMail;
+    ExButton *saveMail;
+    ExButton *selectAllAsReaded;
+    ExButton *contactList;
+    ExButton *toHome;
+    ExButton *findList;
     GroupExButtons * groupMenu;
     /*colors and styles*/
     QString mainBackGroudColor;
@@ -60,8 +64,9 @@ private:
     QString lineEditStyleSheet;
     QString labelStyleSheet;
     QString frameStyleSheet;
+    QString comboBoxStyleSheet;
     /*overlay*/
-    QWidget * overLay;
+    QWidget *overLay;
     TrackWidget *trackBar;
 
     /*initialization*/
@@ -72,7 +77,7 @@ private:
     void initTopControllLayout();
     void initOverLay();
     void initMenuExButtons();
-    void initColors();
+    void initColorsStyles();
     void initProfiles();
     void initProfileWindow();
     void initCentrallWidget();
@@ -80,18 +85,21 @@ private:
     void initProfileEditWindow();
     void initEmailEditWindow();
     void initNewEmailWindow();
+    void initProfileDirectWindow();
 
     /*profiles*/
     QList <Profile*> profileList;
     QList <QString*> profilesSaveWays;
-    Profile * currentProfile;
+    Profile *currentProfile;
+    Account *currentAccount;
 
     /*windows*/
-    ProfileWindow * MainProfileWindow;
+    ProfileWindow *MainProfileWindow;
     ProfileSetupWindow *profileSetupWindow;
     ProfileEditWindow *profileEditWindow;
     EmailEditWindow *emailEditWindow;
     AddNewEmailWindow *addNewEmailWindow;
+    DirectWindow *profileDirectWindow;
 
 public:
     MainWindow(QWidget *parent = 0);
@@ -105,13 +113,13 @@ public:
     void setMainBackGroudColor(const QString &color);
     void setAdditionBackGroundColor(const QString &color);
     void setOverlayBackGroundColor(const QString &color);
+    /*profiles*/
     bool openAllProfilesInf();
     bool openAllprofiles();
+    void setCurrentAccount(Account *account);
     /********/
 
 private slots:
-    void showProfileWindow();
-    void hideProfileWindow();
     void updateProfiles();
     void loginProfile(Profile *profile);
     void logoutProfile();
@@ -119,11 +127,20 @@ private slots:
     void subwindowsOff();
     void onCloseButtonClicked();
     void resizeOverlay();
+    void onProfileLabelClicked();
+    void accountChanged(int pos);
+    void reLogin();
+    void overLayShow();
+    void overLayClose();
+    void editProfile();
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+signals:
+    void someWindowOpened();
+    void someWindowClosed();
 };
 
 #endif // MAINWINDOW_H

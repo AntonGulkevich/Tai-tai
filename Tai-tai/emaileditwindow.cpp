@@ -13,6 +13,8 @@ EmailEditWindow::EmailEditWindow(QWidget *parent) :
     initLayouts();
     /*Ex buttons*/
     initExButtons();
+
+    hide();
 }
 void EmailEditWindow::StartHideAnim(){
     int left =0;
@@ -24,8 +26,10 @@ void EmailEditWindow::StartHideAnim(){
     animation->setStartValue(QRect(left, top, width_, height_));
     animation->setEndValue(QRect(left, top, 1, height_));
     animation->start(QAbstractAnimation::DeleteWhenStopped);
-    connect (animation, SIGNAL(finished()), this, SLOT(hide()));
+    connect (animation, SIGNAL(finished()), this, SLOT(close()));
     controllGroup->closeGroup();
+    restoreProfile();
+    delete(reservProfile);
     emit hide_();
 }
 void EmailEditWindow::StartShowAnim(int left, int top, int width, int height){
@@ -36,7 +40,7 @@ void EmailEditWindow::StartShowAnim(int left, int top, int width, int height){
     animation->setStartValue(QRect(left, top, 0, height));
     animation->setEndValue(QRect(left, top, width, height));
     animation->start(QAbstractAnimation::DeleteWhenStopped);
-    controllGroup->moveToPoints(150 - controllGroup->getBigRadius()/2, this->height()-105);
+    controllGroup->moveToPoints(150 - controllGroup->getBigRadius()/2, buttonsLay->geometry().top()+70);
     emailGB->setMinimumHeight(this->height()-220);
     scrollArea->setFixedHeight(this->height()-225);
     fillEmailsTable();
@@ -51,6 +55,10 @@ bool EmailEditWindow::isCorrectLineEdit(QLineEdit *lineEdit){
         lineEdit->setStyleSheet("");
         return true;
     }
+}
+
+void EmailEditWindow::restoreProfile(){
+    *currentProfile=*reservProfile;
 }
 
 void EmailEditWindow::initLayouts(){
@@ -198,6 +206,8 @@ void EmailEditWindow::clearAllContent(){
 
 void EmailEditWindow::onSaveAndExitEBClicked(){
     controllGroup->closeGroup();
+    onApproveEBClicked();
+    StartHideAnim();
 }
 
 void EmailEditWindow::onBackEBClicked(){
@@ -214,10 +224,27 @@ void EmailEditWindow::onAddEmailEBClicked(){
 
 void EmailEditWindow::onApproveEBClicked(){
     controllGroup->closeGroup();
+    //QFile::remove(currentProfile->getSaveWay());
+    currentProfile->saveprofile();
+    *reservProfile=*currentProfile;
 }
 
 void EmailEditWindow::onDeleteEBClicked(){
     controllGroup->closeGroup();
+    QLayoutItem *wItem;
+    QCheckBox *ch;
+    int pos=0;
+    for (QList <QWidget *>::iterator it=emailList.begin(); it!=emailList.end(); ++it){
+        wItem = (*it)->layout()->takeAt(0);
+        ch =(QCheckBox *)wItem->widget();
+        if (ch->isChecked()){
+            currentProfile->deleteEmail(pos--);
+        }
+        pos++;
+    }
+    fillEmailsTable();
+    qDebug()<<currentProfile->getEmailCount()<<reservProfile->getEmailCount();
+
 }
 
 void EmailEditWindow::onEditEBClicked(){
@@ -226,26 +253,41 @@ void EmailEditWindow::onEditEBClicked(){
 
 void EmailEditWindow::animatedShow(){
     StartShowAnim(0, 0, 300, parentWidget()->height());
-    //raise();
+}
+
+void EmailEditWindow::clearEmailTable(){
+
+    for (QList <QWidget *>::iterator it=emailList.begin(); it!=emailList.end(); ++it){
+        delete(*it);
+    }
+    emailList.clear();
 }
 
 void EmailEditWindow::fillEmailsTable(){
+    clearEmailTable();
     int count;
-    QString name;
+    QString name;    
     count = currentProfile->getEmailCount();
+    int height = 30*count;
+    scrollWidget->setMinimumHeight(height);
+    scrollWidget->setMaximumHeight(height);
     for (int i = 0; i < count; ++i) {
         name =currentProfile->getAccount(i)->GetLogin() ;
         addNewEmailAccount(name);
+        scrollLayout1->addWidget(emailList.at(i));
     }
 }
 
 void EmailEditWindow::setCurrentProfile(Profile *profile){
     currentProfile = profile;
+    reservProfile = new Profile();
+    *reservProfile = *currentProfile;
     windowCaptionLabel->setText("Manage emails: "+currentProfile->getLogin());
 }
 
 void EmailEditWindow::setAddNewEmailWindow(AddNewEmailWindow *window){
     addNewEmailWindow = window;
+    connect(addNewEmailWindow, SIGNAL(addedNewEmailAccount()), this, SLOT(fillEmailsTable()));
 }
 
 void EmailEditWindow::addNewEmailAccount(const QString &name){
@@ -256,15 +298,16 @@ void EmailEditWindow::addNewEmailAccount(const QString &name){
     ExButton *delEmailExButton;
     QWidget *emailLineWidget;
     QHBoxLayout *emailLineLay;
-    scrollWidget->setMinimumHeight(scrollWidget->height()+25);
     emailLineWidget = new QWidget();
     emailLineLay = new QHBoxLayout(emailLineWidget);
     emailLineLay->setSpacing(spacing);
     emailLineLay->setMargin(margin);
+    emailLineWidget->setObjectName("emailLineWidget");
+    emailLineWidget->setStyleSheet("QWidget#emailLineWidget {border-bottom:1px solid lightgrey;}");
 
     emailSelectionCH = new QCheckBox;
     emailName = new ExLabel(name);
-    emailName->setStyleSheet("QLabel {color: #436EEE;font-size: 12px;}");
+    emailName->setStyleSheet("QLabel {color: #436EEE;font-size: 12px;border-bottom:1px solid lightgrey}");
 
     delEmailExButton = new ExButton(emailLineWidget, "Delete", 15, 0);
     delEmailExButton->setImage(":/resourses/icons/cancel_nb.png");
@@ -277,6 +320,8 @@ void EmailEditWindow::addNewEmailAccount(const QString &name){
     emailLineLay->addWidget(emailName, 1, Qt::AlignLeft);
     emailLineLay->addWidget(delEmailExButton, 1, Qt::AlignRight);
     emailLineLay->addSpacing(10);
+    emailList.append(emailLineWidget);
 
-    scrollLayout1->addWidget(emailLineWidget, 1);
+    connect (delEmailExButton, SIGNAL(leftClicked()), emailSelectionCH, SLOT(toggle()));
+    connect (delEmailExButton, SIGNAL(leftClicked()), this, SLOT(onDeleteEBClicked()));
 }

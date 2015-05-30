@@ -8,12 +8,13 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
     /*style of main window*/
     initDefaultStyle();
 
-    /*Profile Windows*/
+    /*init Windows*/
     initProfileSetupWindow();
     initProfileEditWindow();
     initProfileWindow();
     initEmailEditWindow();
     initNewEmailWindow();
+    initProfileDirectWindow();
 
     /*layouts setup and init*/
     initLayouts();
@@ -34,7 +35,6 @@ MainWindow::MainWindow(QWidget *parent):QFrame(parent)
     initProfiles();
 
     /* TEST*/
-    addNewEmailWindow->StartShowAnim(0, 0, 300, height());
 }
 
 void MainWindow::initDefSettings(){
@@ -49,6 +49,7 @@ void MainWindow::initDefSettings(){
     mainWindowMinSize.setHeight(550);
     mainWindowMinSize.setWidth(500);
     currentProfile= NULL;
+    currentAccount = NULL;
     this->installEventFilter(this);
 }
 
@@ -112,12 +113,8 @@ void MainWindow::initDefaultStyle(){
     resize(mainWindowStartSize);
     move(mainWindownStartPoint);
     setMinimumSize(mainWindowMinSize);
-    initColors();
 
-
-    profileNameExLabel = new ExLabel("Profile");
-    profileNameExLabel->setStyleSheet("color: #436EEE");
-
+    initColorsStyles();
 }
 
 void MainWindow::initLayouts(){
@@ -147,29 +144,33 @@ void MainWindow::initTopControllLayout(){
     int spacing=5;
     int maximumHeightTopLabel =31;
 
-    QWidget * topback = new QWidget();
-    topback->setStyleSheet("background-color:"+additionBackGroundColor+";border: 0px");
+    QWidget * topback = new QWidget(this);
+    topback->setStyleSheet("QWidget {background-color:"+additionBackGroundColor+";border: 0px}");
     topback->setMaximumHeight(maximumHeightTopLabel);
     QBoxLayout * controllLay = new QBoxLayout(QBoxLayout::LeftToRight);
     controllLay->setMargin(margin);
     controllLay->setSpacing(spacing);
-
-    topControllLay->addWidget(topback);
     topback->setLayout(controllLay);
+    topControllLay->addWidget(topback);
+
+    profileNameExLabel = new ExLabel("Press here to start");
+    profileNameExLabel->setStyleSheet("color: #436EEE");
+
+    QHBoxLayout *profileLay = new QHBoxLayout;
+    profileLay->addWidget(profileNameExLabel, 0, Qt::AlignRight);
 
     initControllExButtons();
 
     controllLay->addWidget(settingsGenegal, 0, Qt::AlignLeft|Qt::AlignHCenter);
     controllLay->addStretch(1);
-    controllLay->addWidget(profileNameExLabel, 0, Qt::AlignHCenter|Qt::AlignHCenter);
+    controllLay->addLayout(profileLay, 0);
     controllLay->addStretch(1);
     controllLay->addWidget(hideToTray, 0, Qt::AlignRight|Qt::AlignHCenter);
     controllLay->addWidget(expandToWindow, 0, Qt::AlignRight|Qt::AlignHCenter);
     controllLay->addWidget(collapseToWindow, 0, Qt::AlignRight|Qt::AlignHCenter);
     controllLay->addWidget(closeProgramm, 0, Qt::AlignRight|Qt::AlignHCenter);
 
-    connect(profileNameExLabel, SIGNAL(clicked()), this, SLOT(showProfileWindow()));
-
+    connect(profileNameExLabel, SIGNAL(clicked()), this, SLOT(onProfileLabelClicked()));
 }
 
 void MainWindow::initOverLay(){
@@ -178,9 +179,8 @@ void MainWindow::initOverLay(){
     overLay->setGeometry(0, 0, width(), height());
     overLay->setStyleSheet("background-color:"+overlayBackGroundColor);
     overLay->hide();
-    connect (MainProfileWindow, SIGNAL(hide_()), overLay, SLOT(hide()));
-    connect (MainProfileWindow, SIGNAL(show_()), overLay, SLOT(show()));
-    connect (MainProfileWindow, SIGNAL(show_()), this, SLOT(resizeOverlay()));
+    connect (this, SIGNAL(someWindowOpened()), this, SLOT(overLayShow()));
+    connect (this, SIGNAL(someWindowClosed()), this, SLOT(overLayClose()));
 }
 
 void MainWindow::initMenuExButtons(){
@@ -243,7 +243,7 @@ void MainWindow::initMenuExButtons(){
     groupMenu->hideGroup();
 }
 
-void MainWindow::initColors(){
+void MainWindow::initColorsStyles(){
     mainBackGroudColor ="white";
     additionBackGroundColor="rgb(250, 250, 250)";
     overlayBackGroundColor ="rgba(130, 130, 130, 50%)";
@@ -272,8 +272,24 @@ void MainWindow::initColors(){
 
     labelStyleSheet = "     QLabel {border:0px}";
 
-    setStyleSheet(frameStyleSheet+groupBoxStyleSheet+lineEditStyleSheet+labelStyleSheet);
-
+    comboBoxStyleSheet= "   QComboBox{ border: 0px solid lightgrey; \
+                                    padding: 1px 1px 1px 1px;}\
+                            QComboBox::down-arrow{ border: 0px solid; \
+                                    image: url(:/resourses/icons/dropDown.png);\
+                                    width: 12px;\
+                                    height: 12px;}\
+                            QComboBox::down-arrow:on{border: 0px solid;\
+                                    top: 1px;\
+                                    left: 1px}\
+                            QComboBox::down-arrow:button { border: 0px solid red;}\
+                            QComboBox QAbstractItemView { border: 1px solid darkgray;}\
+                            QComboBox::drop-down{border: 0px solid; \
+                                    border-left:0px solid lightgrey;}";
+    setStyleSheet(frameStyleSheet+
+                  groupBoxStyleSheet+
+                  lineEditStyleSheet+
+                  labelStyleSheet+
+                  comboBoxStyleSheet);
 }
 
 void MainWindow::initProfiles(){
@@ -301,37 +317,62 @@ void MainWindow::initProfileWindow(){
 }
 
 void MainWindow::initCentrallWidget(){
+    /*TEST*/
     QWidget * centrallBackWidget =  new QWidget();
     centrallBackWidget->setStyleSheet("background-color:white; border: 0px");
-    centrallLay->addWidget(centrallBackWidget);
+    //centrallLay->addWidget(centrallBackWidget);
+    QLabel *imageLabel= new QLabel;
+    centrallLay->addWidget(imageLabel, 1);
+    centrallLay->setMargin(0);
+    centrallLay->setSpacing(0);
+    imageLabel->setVisible(true);
+    QPixmap im (":/resourses/icons/back.png");
+    imageLabel->setScaledContents(false);
+    imageLabel->setPixmap(im);
+    imageLabel->raise();
+    imageLabel->setStyleSheet("border:0px");
+    /*TEST*/
 }
 
 void MainWindow::initProfileSetupWindow(){
     profileSetupWindow = new ProfileSetupWindow(this);
+
     connect (profileSetupWindow, SIGNAL(show_()), this, SLOT(subwindowsOn()));
     connect (profileSetupWindow, SIGNAL(hide_()), this, SLOT(subwindowsOff()));
-
 }
 
 void MainWindow::initProfileEditWindow(){
     profileEditWindow = new ProfileEditWindow(this);
+
     connect (profileEditWindow, SIGNAL(show_()), this, SLOT(subwindowsOn()));
     connect (profileEditWindow, SIGNAL(hide_()), this, SLOT(subwindowsOff()));
 }
 
 void MainWindow::initEmailEditWindow(){
-    emailEditWindow = new EmailEditWindow(this);
-    connect (emailEditWindow, SIGNAL(show_()), this, SLOT(subwindowsOn()));
-    connect (emailEditWindow, SIGNAL(hide_()), this, SLOT(subwindowsOff()));
+    emailEditWindow = new EmailEditWindow(this);    
     profileEditWindow->setEmailEditWindow(emailEditWindow);
     MainProfileWindow->setEmailEditWindow(emailEditWindow);
+
+    connect (emailEditWindow, SIGNAL(show_()), this, SLOT(subwindowsOn()));
+    connect (emailEditWindow, SIGNAL(hide_()), this, SLOT(subwindowsOff()));
 }
 
 void MainWindow::initNewEmailWindow(){
-    addNewEmailWindow= new AddNewEmailWindow(this);
+    addNewEmailWindow= new AddNewEmailWindow(this);    
+    emailEditWindow->setAddNewEmailWindow(addNewEmailWindow);
+    connect(addNewEmailWindow, SIGNAL(addedNewEmailAccount()), this, SLOT(reLogin()));
+
     connect (addNewEmailWindow, SIGNAL(show_()), this, SLOT(subwindowsOn()));
     connect (addNewEmailWindow, SIGNAL(hide_()), this, SLOT(subwindowsOff()));
-    emailEditWindow->setAddNewEmailWindow(addNewEmailWindow);
+}
+
+void MainWindow::initProfileDirectWindow(){
+    profileDirectWindow = new DirectWindow(this);
+    profileDirectWindow->setComboBoxSS(comboBoxStyleSheet);
+    connect(profileDirectWindow, SIGNAL(changeProfileELClicked()), MainProfileWindow, SLOT(animatedShow()));
+    connect(profileDirectWindow, SIGNAL(changeProfileELClicked()), this, SLOT(logoutProfile()));
+    connect(profileDirectWindow, SIGNAL(editProfileELClicked()), this, SLOT(editProfile()));
+    connect(profileDirectWindow, SIGNAL(emailIndexChanged(int)), this, SLOT(accountChanged(int)));
 }
 
 MainWindow::~MainWindow(){
@@ -418,14 +459,8 @@ bool MainWindow::openAllprofiles(){
     return true;
 }
 
-void MainWindow::showProfileWindow(){
-    MainProfileWindow->StartShowAnim(0, 0, 300, height());
-    overLay->raise();
-    MainProfileWindow->raise();
-}
-
-void MainWindow::hideProfileWindow(){
-    MainProfileWindow->StartHideAnim(0, 0, 300, height());
+void MainWindow::setCurrentAccount(Account *account){
+    currentAccount=account;
 }
 
 void MainWindow::updateProfiles(){
@@ -436,21 +471,41 @@ void MainWindow::updateProfiles(){
 }
 
 void MainWindow::loginProfile(Profile *profile){
+    logoutProfile();
     currentProfile = profile;
-    profileNameExLabel->setText(currentProfile->getLogin());
+    int emailCount;
+    emailCount =currentProfile->getEmailCount();
+
+
+    profileDirectWindow->setProfileCaption(currentProfile->getLogin());
+    profileDirectWindow->setProfileAva(currentProfile->getAvatar());
+    if (emailCount){
+        setCurrentAccount(currentProfile->getAccount(0));
+        for (int i = 0; i < emailCount; ++i) {
+            profileDirectWindow->addEmail(currentProfile->getAccount(i)->GetLogin());
+            profileNameExLabel->setText(currentProfile->getLogin()+": "+currentAccount->GetLogin());
+        }
+    }
+    else{
+        profileNameExLabel->setText(currentProfile->getLogin() + ", add first email.");
+    }
 }
 
 void MainWindow::logoutProfile(){
     currentProfile = NULL;
-    profileNameExLabel->setText("Profiles");
+    currentAccount = NULL;
+    profileNameExLabel->setText("Press here to start");
+    profileDirectWindow->setDefaults();
 }
 
 void MainWindow::subwindowsOn(){
     ++subWindows;
+    emit someWindowOpened();
 }
 
 void MainWindow::subwindowsOff(){
     --subWindows;
+    emit someWindowClosed();
 }
 
 void MainWindow::onCloseButtonClicked(){
@@ -459,6 +514,56 @@ void MainWindow::onCloseButtonClicked(){
 
 void MainWindow::resizeOverlay(){
     overLay->resize(width(), height());
+}
+
+void MainWindow::onProfileLabelClicked(){
+    if (currentProfile){
+        if (currentAccount){
+            QPoint localPos(10,20 );/*
+            localPos.setX(profileNameExLabel->geometry().x());
+            localPos.setY(profileNameExLabel->geometry().y());*/
+            QPoint globalPos = profileNameExLabel->mapToGlobal(localPos);
+            profileDirectWindow->animatedShow(globalPos);
+            return;
+        }
+        else{
+            addNewEmailWindow->StartShowAnim(0, 0, 300, height());
+            addNewEmailWindow->setCurrentProfile(currentProfile);
+            emailEditWindow->setCurrentProfile(currentProfile);
+            return;
+        }
+    }
+    else{
+        MainProfileWindow->animatedShow();
+    }
+}
+
+void MainWindow::accountChanged(int pos){
+    setCurrentAccount(currentProfile->getAccount(pos));
+    profileNameExLabel->setText(currentProfile->getLogin()+": "+currentAccount->GetLogin());
+}
+
+void MainWindow::reLogin(){
+    loginProfile(currentProfile);
+}
+
+void MainWindow::overLayShow(){
+    if (subWindows){
+        resizeOverlay();
+        overLay->show();
+    }
+}
+
+void MainWindow::overLayClose(){
+    if (subWindows==0){
+        overLay->hide();
+    }
+}
+
+void MainWindow::editProfile(){
+    profileEditWindow->StartShowAnim(0, 0, 300 ,height());
+    profileEditWindow->setCurrentProfile(currentProfile);
+
 }
 bool MainWindow::eventFilter(QObject *obj, QEvent *event){
     if (subWindows)
@@ -481,18 +586,26 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event){
     return QObject::eventFilter(obj,event);
 }
 void MainWindow::mousePressEvent(QMouseEvent *event){
+    canMove=false;
     if(event->button() == Qt::LeftButton)    {
         mpos = event->pos();
         canMove = true;
     }
-    if(subWindows>0){
-        if (mpos.x()>300){
+    if (mpos.x()>300){
+        if (!profileEditWindow->isHidden()){
             profileEditWindow->StartHideAnim();
+        }
+        if (!profileSetupWindow->isHidden()){
             profileSetupWindow->animatedHide();
+        }
+        if (!MainProfileWindow->isHidden()){
             MainProfileWindow->animatedHide();
+        }
+        if (!emailEditWindow->isHidden()){
             emailEditWindow->StartHideAnim();
+        }
+        if (!addNewEmailWindow->isHidden()){
             addNewEmailWindow->StartHideAnim();
-            subWindows=0;
         }
     }
 }
@@ -503,7 +616,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event){
     }
 }
 void MainWindow::mouseMoveEvent(QMouseEvent *event){
-    if((event->buttons() & Qt::LeftButton) && canMove){
+    if((event->buttons() & Qt::LeftButton) && canMove && !subWindows){
         move(event->globalPos()-mpos);
     }
 }

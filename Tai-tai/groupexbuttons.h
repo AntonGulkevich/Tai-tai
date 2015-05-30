@@ -29,6 +29,7 @@ public:
     int getSmallRadius();
     double getScaleKoef();
     void setScaleKoef(double scale_);
+
 private:
     QList <ExButton*> subButtons;
     ExButton * defaultButton;

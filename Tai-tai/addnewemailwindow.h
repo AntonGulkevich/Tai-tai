@@ -32,12 +32,13 @@ public:
 signals:
     void hide_();
     void show_();
+    void addedNewEmailAccount();
 
 public slots:
     void onSaveAndExitEBClicked();
     void onBackEBClicked();
     void onDefaultEBClicked();
-    void onApproveEBClicked();
+    bool onApproveEBClicked();
     bool onCheckEmailEBClicked();
     void setCurrentProfile(Profile *profile);
     void autoFillProtocol();

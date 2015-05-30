@@ -43,6 +43,7 @@ signals:
 public slots:
     void drawButton();
     void animatedHide();
+    void animatedShow();
 
     void loginExButtonLeftClicked();
     void createExButtonLeftClicked();
@@ -57,6 +58,7 @@ public slots:
     void startEditProfile();
     void setupLastProfile();
     void addNewEmailLastProfile();
+    void setDefaultsLineEdit();
 
 private:
     QPropertyAnimation * animation;
@@ -86,7 +88,6 @@ private:
     QList <QString*> *profilesSaveWays;
     Profile *currentProfile;
     int currentProfileNumber;    
-    QLabel *errorMessageLabel;
 
     ProfileSetupWindow * profileSetWin;
     ProfileEditWindow *profileEditWin;
@@ -97,6 +98,7 @@ private:
     void setupExButtons();
     void setupNextPrevExButtons();
     void deleteProfile();
+    void showErrorMessageInLineEdit(QLineEdit * le, const QString &messsage);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event);

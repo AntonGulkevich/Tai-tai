@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     trackwidget.cpp \
     profileeditwindow.cpp \
     emaileditwindow.cpp \
-    addnewemailwindow.cpp
+    addnewemailwindow.cpp \
+    directwindow.cpp
 
 HEADERS  += mainwindow.h \
     profilewindow.h \
@@ -54,7 +55,8 @@ HEADERS  += mainwindow.h \
     trackwidget.h \
     profileeditwindow.h \
     emaileditwindow.h \
-    addnewemailwindow.h
+    addnewemailwindow.h \
+    directwindow.h
 
 RESOURCES += \
     icons.qrc

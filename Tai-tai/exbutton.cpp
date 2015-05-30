@@ -277,17 +277,19 @@ void ExButton::mousePressEvent(QMouseEvent* pe ){
     }
 }
 void ExButton::mouseReleaseEvent(QMouseEvent* pe){
-    if (!IsAnimationBlocked()&&(pe->button()==Qt::RightButton)){
-        emit rightClicked();
-    }
-    if (!IsAnimationBlocked()&&(pe->button()==Qt::LeftButton)){
-        emit leftClicked();
-    }
     if (isMaximumSize()){
         setStyleSheet(defaultSSBig+hoverSS);
     }
     else{
         setStyleSheet(defaultSSSmall+hoverSS);
+    }
+    if (this->rect().contains(pe->localPos().toPoint()) ) {
+        if (!IsAnimationBlocked()&&(pe->button()==Qt::RightButton)){
+            emit rightClicked();
+        }
+        if (!IsAnimationBlocked()&&(pe->button()==Qt::LeftButton)){
+            emit leftClicked();
+        }
     }
 }
 void ExButton::enterEvent(QEvent *event){

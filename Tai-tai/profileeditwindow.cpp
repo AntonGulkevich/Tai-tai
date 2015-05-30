@@ -14,6 +14,7 @@ ProfileEditWindow::ProfileEditWindow(QWidget *parent) :
     /*Ex buttons*/
     initExButtons();
 
+    hide();
 }
 void ProfileEditWindow::StartShowAnim(int left, int top, int width, int height){
     show();
@@ -23,7 +24,7 @@ void ProfileEditWindow::StartShowAnim(int left, int top, int width, int height){
     animation->setStartValue(QRect(left, top, 0, height));
     animation->setEndValue(QRect(left, top, width, height));
     animation->start(QAbstractAnimation::DeleteWhenStopped);
-    controllGroup->moveToPoints(150 - controllGroup->getBigRadius()/2, buttonsLay->geometry().top()+80);
+    controllGroup->moveToPoints(150 - controllGroup->getBigRadius()/2, buttonsLay->geometry().top()+70);
     emit show_();
 }
 
@@ -37,7 +38,7 @@ void ProfileEditWindow::StartHideAnim(){
     animation->setStartValue(QRect(left, top, width_, height_));
     animation->setEndValue(QRect(left, top, 1, height_));
     animation->start(QAbstractAnimation::DeleteWhenStopped);
-    connect (animation, SIGNAL(finished()), this, SLOT(hide()));
+    connect (animation, SIGNAL(finished()), this, SLOT(close()));
     controllGroup->closeGroup();
     emit hide_();
 }

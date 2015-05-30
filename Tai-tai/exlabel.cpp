@@ -12,18 +12,19 @@ ExLabel::ExLabel(const QString &text, QWidget *parent) :
     unselectedFont->setUnderline(false);
 
     selectedFont->setPixelSize(12);
-    selectedFont->setBold(true);
+    selectedFont->setBold(false);
     selectedFont->setUnderline(true);
 
     activeFont->setPixelSize(13);
-    activeFont->setBold(true);
+    activeFont->setBold(false);
     activeFont->setUnderline(true);
 
     setStyleSheet("QLabel{border: 0 px}");
-    activeStyleSheet="QLabel{border: 3px solid gray;}";
-    inActiveStyleSheet="QLabel{border: 1px solid gray;}";
+    activeStyleSheet="QLabel{border: 0px solid gray;}";
+    inActiveStyleSheet="QLabel{border: 0px solid gray;}";
 
     active=false;
+    dinamicSS = false;
 }
 ExLabel::~ExLabel(){
     delete selectedFont;
@@ -37,11 +38,11 @@ void ExLabel::leaveEvent(QEvent *event){
     }
     else{
         setFont(*unselectedFont);
+        if (dinamicSS)
+            setStyleSheet(inActiveStyleSheet);
     }
-    QWidget::leaveEvent(event);
-    if (pixmap())
-        setStyleSheet(inActiveStyleSheet);
     emit mouseLeaved();
+    QWidget::leaveEvent(event);
 }
 void ExLabel::enterEvent(QEvent *event){
     if (active){
@@ -49,12 +50,13 @@ void ExLabel::enterEvent(QEvent *event){
     }
     else{
         setFont(*selectedFont);
-    }
-    QWidget::enterEvent(event);
-    if (pixmap())
-        setStyleSheet(activeStyleSheet);
+        if (dinamicSS)
+            setStyleSheet(activeStyleSheet);
+    }        
     emit mouseEntered();
+    QWidget::enterEvent(event);
 }
+
 void ExLabel::SetSelectedFont(const QFont &font){
     *selectedFont= font;
 }
@@ -65,7 +67,7 @@ void ExLabel::SetUnSelectedFont(const QFont &font){
     *unselectedFont=font;
 }
 void ExLabel::mousePressEvent(QMouseEvent *pe){
-    if (pixmap())
+    if (dinamicSS)
         setStyleSheet(inActiveStyleSheet);
     setFont(*activeFont);
 }
@@ -77,7 +79,7 @@ void ExLabel::mouseReleaseEvent(QMouseEvent *pe){
         setFont(*selectedFont);
     }
     OnClick();
-    if (pixmap())
+    if (dinamicSS)
         setStyleSheet(activeStyleSheet);
 }
 void ExLabel::setActive(bool status){
@@ -92,9 +94,11 @@ void ExLabel::OnClick(){
 }
 void ExLabel::setActiveStyleSheet(const QString &ss){
     activeStyleSheet=ss;
+    dinamicSS = true;
 }
 void ExLabel::setInActiveStyleSheet(const QString &ss){
     inActiveStyleSheet=ss;
+    dinamicSS = true;
 }
 void ExLabel::incActiveFont(){
     activeFont->setPixelSize(activeFont->pixelSize()+1);
@@ -128,6 +132,15 @@ void ExLabel::setFonts(int act, int sel, int uns){
     activeFont->setPixelSize(act);
     selectedFont->setPixelSize(sel);
     unselectedFont->setPixelSize(uns);
+    setFont(*unselectedFont);
+}
+
+void ExLabel::setDinamicSS(bool mode){
+    dinamicSS = mode;
+}
+
+bool ExLabel::isDinamicSS(){
+    return dinamicSS;
 }
 
 

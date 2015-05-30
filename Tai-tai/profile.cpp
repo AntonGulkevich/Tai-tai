@@ -63,6 +63,22 @@ Account *Profile::getAccount(int pos){
     return accountList.at(pos);
 }
 
+Profile &Profile::operator=(const Profile &right){
+    if (this == &right) {
+        return *this;
+    }
+    login= right.login;
+    passwordText= right.passwordText;
+    avatar= right.avatar;
+    saveWay= right.saveWay;
+    dGuiMode= right.dGuiMode;
+    statisticMode= right.statisticMode;
+    accountList= right.accountList;
+    allProfilesSaveWay= right.allProfilesSaveWay;
+
+    return *this;
+}
+
 bool Profile::verification(const QString &password){
     if (password==passwordText){
         return true;
@@ -107,6 +123,10 @@ bool Profile::deleteEmail(Account *account){
       }
     }
     return false;
+}
+
+bool Profile::deleteEmail(int pos){
+    accountList.removeAt(pos);
 }
 
 bool Profile::addToAllProfiles(){

@@ -54,7 +54,13 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     profileAvaLabel->setMaximumSize(200, 220);
     QPixmap avadef(defaultAva);
     profileAvaLabel->setPixmap(avadef);
-    profileAvaLabel->setStyleSheet("QLabel{border: 1px solid gray;}");
+    QString actSS, inActSS;
+    actSS="QLabel{ border: 1px solid gray;}";
+    inActSS ="QLabel{ border: 1px solid lightgray;}";
+    profileAvaLabel->setStyleSheet(inActSS);
+    profileAvaLabel->setActiveStyleSheet(actSS);
+    profileAvaLabel->setInActiveStyleSheet(inActSS);
+    profileAvaLabel->setScaledContents(true);
 
     QLabel *profilePasswordLabel = new QLabel("New password:");
     profilePasswordFirstLE =  new QLineEdit();
@@ -92,7 +98,6 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     int radius=50;
 
     cancel = new ExButton(this,  "Cancel", radius, 0);
-    cancel->move(800/4-100+50/2, 600/2+50/2+150);
     cancel->setRotation(273);
     cancel->setImage(":/resourses/icons/back_nb.png");
     cancel->setImageMargin(margin);
@@ -134,7 +139,7 @@ ProfileSetupWindow::ProfileSetupWindow(QWidget *parent) :
     connect (this, SIGNAL(show_()), this , SLOT(createTempProfile()));
     /*************/
 
-
+    hide();
 }
 
 void ProfileSetupWindow::StartShowAnim(int left, int top, int width, int height){
@@ -145,6 +150,7 @@ void ProfileSetupWindow::StartShowAnim(int left, int top, int width, int height)
     animation->setStartValue(QRect(left, top, 0, height));
     animation->setEndValue(QRect(left, top, width, height));
     animation->start(QAbstractAnimation::DeleteWhenStopped);
+    controllGroup->moveToPoints(150 - controllGroup->getBigRadius()/2, botLayl->geometry().top()+70);
     emit show_();
 }
 
@@ -155,7 +161,8 @@ void ProfileSetupWindow::StartHideAnim(int left, int top, int width, int height)
     animation->setStartValue(QRect(left, top, width, height));
     animation->setEndValue(QRect(left, top, 1, height));
     animation->start(QAbstractAnimation::DeleteWhenStopped);
-    connect (animation, SIGNAL(finished()), this, SLOT(hide()));
+    connect (animation, SIGNAL(finished()), this, SLOT(close()));
+    emit hide_();
     controllGroup->closeGroup();
 }
 bool ProfileSetupWindow::isCorrectLineEdit(QLineEdit *lineEdit){
@@ -199,7 +206,6 @@ void ProfileSetupWindow::onCancelExButtonclicked(){
 }
 void ProfileSetupWindow::animatedHide(){
     StartHideAnim(0, 0, width(), height());
-    emit hide_();
 }
 
 void ProfileSetupWindow::onAvatarCliked(){

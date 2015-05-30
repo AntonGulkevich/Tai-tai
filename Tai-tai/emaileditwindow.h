@@ -10,6 +10,7 @@
 #include <QPropertyAnimation>
 #include <QGroupBox>
 #include <QScrollArea>
+#include <QList>
 
 #include "exbutton.h"
 #include "exlabel.h"
@@ -26,7 +27,7 @@ public:
     void StartHideAnim();
     void StartShowAnim(int left, int top, int width, int height);
     bool isCorrectLineEdit(QLineEdit *lineEdit);
-    void fillEmailsTable();
+    void restoreProfile();
 private:
     QBoxLayout *mainLay;
     QBoxLayout *buttonsLay;
@@ -46,7 +47,8 @@ private:
     GroupExButtons *controllGroup;
 
     QScrollArea *scrollArea;
-    Profile * currentProfile;
+    Profile *currentProfile;
+    Profile *reservProfile;
     QGroupBox *emailGB;
 
     AddNewEmailWindow *addNewEmailWindow;
@@ -55,6 +57,8 @@ private:
     void initButtonsLay();
     void initExButtons();
     void initScrollLay();
+
+    QList <QWidget *> emailList;
 
 signals:
     void hide_();
@@ -66,14 +70,16 @@ public slots:
     void setAddNewEmailWindow(AddNewEmailWindow *window);
     void addNewEmailAccount(const QString &name);
     /*buttons*/
-    void onSaveAndExitEBClicked();
-    void onBackEBClicked();
-    void onAddEmailEBClicked();
-    void onApproveEBClicked();
-    void onDeleteEBClicked();
+    void onSaveAndExitEBClicked();//completed
+    void onBackEBClicked();//completed
+    void onAddEmailEBClicked();//completed
+    void onApproveEBClicked();//completed
+    void onDeleteEBClicked();//completed
     void onEditEBClicked();
     /*fc*/
     void animatedShow();
+    void clearEmailTable();
+    void fillEmailsTable();
 protected:
 
 };

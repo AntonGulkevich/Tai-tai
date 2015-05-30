@@ -15,6 +15,8 @@ AddNewEmailWindow::AddNewEmailWindow(QWidget *parent) :
     /*Ex buttons*/
     initExButtons();
 
+    hide();
+
 }
 void AddNewEmailWindow::StartHideAnim(){
     int left =0;
@@ -26,7 +28,7 @@ void AddNewEmailWindow::StartHideAnim(){
     animation->setStartValue(QRect(left, top, width_, height_));
     animation->setEndValue(QRect(left, top, 1, height_));
     animation->start(QAbstractAnimation::DeleteWhenStopped);
-    connect (animation, SIGNAL(finished()), this, SLOT(hide()));
+    connect (animation, SIGNAL(finished()), this, SLOT(close()));
     controllGroup->closeGroup();
     emit hide_();
 }
@@ -38,8 +40,8 @@ void AddNewEmailWindow::StartShowAnim(int left, int top, int width, int height){
     animation->setStartValue(QRect(left, top, 0, height));
     animation->setEndValue(QRect(left, top, width, height));
     animation->start(QAbstractAnimation::DeleteWhenStopped);
-
-    controllGroup->moveToPoints(150 - controllGroup->getBigRadius()/2, this->height()-105);
+    setDefaults();
+    controllGroup->moveToPoints(150 - controllGroup->getBigRadius()/2, buttonLay->geometry().top()+70);
     emit show_();
 }
 bool AddNewEmailWindow::isCorrectLineEdit(QLineEdit *lineEdit){
@@ -55,7 +57,24 @@ bool AddNewEmailWindow::isCorrectLineEdit(QLineEdit *lineEdit){
 
 void AddNewEmailWindow::onSaveAndExitEBClicked(){
     controllGroup->closeGroup();
+    if (onApproveEBClicked())
+        StartHideAnim();
+}
+
+void AddNewEmailWindow::onBackEBClicked(){
+    controllGroup->closeGroup();
+    StartHideAnim();
+}
+
+void AddNewEmailWindow::onDefaultEBClicked(){
+    controllGroup->closeGroup();
+    setDefaults();
+}
+
+bool AddNewEmailWindow::onApproveEBClicked(){
+    controllGroup->closeGroup();
     if (onCheckEmailEBClicked()){
+        autoFillProtocol();
         QString login, password;
         login = loginLE->text();
         password = passwordLE->text();
@@ -66,26 +85,13 @@ void AddNewEmailWindow::onSaveAndExitEBClicked(){
         tempAccount->setPop3Port(pop3portLE->text().toInt());
         tempAccount->setSmtpHost(smtpHostLE->text());
         tempAccount->setSmtpPort(smtpPortLE->text().toInt());
-        currentProfile->addNewEmail(tempAccount);
-
-        QFile::remove(currentProfile->getSaveWay());
-        currentProfile->saveprofile();
-
-        StartHideAnim();
+        if (currentProfile->addNewEmail(tempAccount)){
+            currentProfile->saveprofile();
+            emit addedNewEmailAccount();
+            return true;
+        }
     }
-}
-
-void AddNewEmailWindow::onBackEBClicked(){
-    controllGroup->closeGroup();
-    StartHideAnim();
-}
-
-void AddNewEmailWindow::onDefaultEBClicked(){
-    controllGroup->closeGroup();
-}
-
-void AddNewEmailWindow::onApproveEBClicked(){
-    controllGroup->closeGroup();
+    return false;
 }
 
 bool AddNewEmailWindow::onCheckEmailEBClicked(){
@@ -161,7 +167,9 @@ void AddNewEmailWindow::setDefaults(){
     smtpHostLE->setText("");
     smtpPortLE->setText("465");
     loginLE->setText("");
+    loginLE->setStyleSheet("");
     passwordLE->setText("");
+    passwordLE->setStyleSheet("");
 }
 
 void AddNewEmailWindow::setDefaultSSLogin(){
