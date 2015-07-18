@@ -22,11 +22,7 @@ The example application would be represented by a simple e-mail client applicati
 ## Features to do
 
 * e-mail client main features(send, get, view)
-* dynamic UI
-	1. Auto close of form on click outside of form.(standard form's buttons like OK CANCEL EXIT. DGUI gonna check user's behaviour and delete/hide some buttons)
-	2. Auto behaviour of full screen mode.
-	3. Extended setup of all DGUI elements.
-	4. in progress....
+* dynamic GUI
 
 ##Issues
 
