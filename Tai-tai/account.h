@@ -2,6 +2,7 @@
 #define ACCOUNT_H
 
 #include <QString>
+#include <QDataStream>
 
 class Account
 {
